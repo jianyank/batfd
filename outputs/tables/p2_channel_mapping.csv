@@ -1,0 +1,13 @@
+﻿pack_id,description,expected_cells,stat,top1_cell,top1_hit,divergence_C1..C8 (已减跨单体中位数)
+6,Increased internal resistance (Cell 8),[8],median,4,False,-0.410 -0.788 -0.916 +1.237 -1.077 +0.681 -1.976 +0.528
+6,Increased internal resistance (Cell 8),[8],q90,8,True,+0.912 +0.104 +0.126 +1.551 -0.173 +1.223 -0.806 +6.772
+6,Increased internal resistance (Cell 8),[8],max,8,True,+3.958 +1.740 +2.399 +2.253 +1.808 +2.749 +0.888 +23.049
+8,Increased internal resistance (all cells),[],median,6,,-3.431 -3.298 +5.163 +3.747 +1.822 +9.359 -1.112 -7.669
+8,Increased internal resistance (all cells),[],q90,6,,+0.092 -1.016 +10.570 +6.584 +3.528 +15.245 -0.434 -2.818
+8,Increased internal resistance (all cells),[],max,6,,+2.285 +0.886 +32.607 +26.413 +7.035 +36.009 +2.265 +0.790
+9,Increased internal resistance (Cell 2),[2],median,2,True,+1.573 +14.486 +1.063 +0.490 +0.375 -0.185 -0.360 -0.553
+9,Increased internal resistance (Cell 2),[2],q90,2,True,+2.615 +51.314 +2.889 +1.197 +1.142 +0.470 +0.528 +0.659
+9,Increased internal resistance (Cell 2),[2],max,2,True,+5.616 +180.335 +12.948 +2.777 +1.991 +1.120 +4.446 +4.988
+10,Increased IR (Cell 8); Abnormal voltage (Cell 7),"[8, 7]",median,8,True,+0.817 +0.793 +1.254 +1.708 +0.906 -3.303 +0.465 +33.146
+10,Increased IR (Cell 8); Abnormal voltage (Cell 7),"[8, 7]",q90,8,True,+30.500 +2.502 +2.530 +3.841 +1.432 -0.925 +1.283 +140.959
+10,Increased IR (Cell 8); Abnormal voltage (Cell 7),"[8, 7]",max,8,True,+55.638 +14.551 +4.781 +31.727 +1.665 +4.248 +13.204 +312.983

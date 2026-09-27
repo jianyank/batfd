@@ -1,0 +1,233 @@
+"""P10：把 outputs/tables 的结果画成图（中英双版本）。只读表、**不重算任何指标**，数字都
+来自 ``outputs/tables/*.csv`` —— 唯一例外是图 5 需要 pack 5 的**逐窗口完整序列**
+（``pack5_case.csv`` 只有分数前 15 名、不含最早越限窗口），该序列由 ``scripts/09_pack5_case.py``
+导出为 ``pack5_series.csv``，本脚本只读它，以免在绘图脚本里重写一遍 LOF 计算、两份实现漂移。
+
+输出 ``outputs/figures/<fig>_<lang>.png``（300dpi，看）与 ``.pdf``（矢量，投稿），``lang`` ∈
+{zh, en}；数据缺失的图**跳过并打印原因**，不画空图。
+
+用法：``python scripts/10_figures.py [--only 1 3] [--no-pdf] [--langs zh en]``
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import sys
+from pathlib import Path
+
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from batfd import config, console  # noqa: E402
+from batfd.viz import plots, style  # noqa: E402
+
+console.setup()
+
+FIG_NAMES = {
+    1: "fig1_tradeoff",
+    2: "fig2_latent_diag",
+    3: "fig3_leadtime",
+    4: "fig4_localize",
+    5: "fig5_pack5_case",
+    6: "fig6_dualtrack",
+}
+
+
+def read_table(path: Path) -> list[dict]:
+    with path.open("r", encoding="utf-8-sig") as fh:
+        return list(csv.DictReader(fh))
+
+
+def num(v, default=None):
+    s = (v or "").strip()
+    if s in ("", "nan", "None"):
+        return default
+    try:
+        return float(s)
+    except ValueError:
+        return default
+
+
+def load_tradeoff(tables: Path) -> dict[str, dict]:
+    """tag -> {lof_mode -> {(q, m) -> row}}"""
+    out: dict[str, dict] = {}
+    for p in sorted(tables.glob("tradeoff_*.csv")):
+        for r in read_table(p):
+            q, m = num(r["q"]), int(num(r["persistence"], 0))
+            if q is None:
+                continue
+            out.setdefault(r["tag"], {}).setdefault(r["lof_mode"], {})[(q, m)] = {
+                "trigger_rate_before_onset": num(r["trigger_rate_before_onset"], float("nan")),
+                "detection_rate": num(r["detection_rate"], float("nan")),
+            }
+    return out
+
+
+def load_latent(tables: Path, runs: Path) -> list[dict]:
+    """``ablation_latent_diag.csv`` 的 6 行，另挂一列 ``val_recon_best_epoch``。
+
+    ⚠ 表里的 ``best_val_loss`` **不能**当重建能力用：``val_loss`` 含 ``λ2·val_late +
+    λ3·val_reg``，各配置 λ 不同（no_kl 的 λ2=0.1、no_late_no_kl 的 λ2=0），排出来是
+    「谁的加权项多谁大」而非「谁重建得准」（原稿图 2 就把它贴上了 val_recon 的标签）。
+
+    真正可跨配置比较的是 ``val_recon``：取 ``best_epoch`` 那一行，与
+    ``_save_checkpoint`` 选中的权重严格对应（``best_epoch`` 由 ``models/train.py`` 按
+    argmin val_loss 记为 1 起始的 epoch，与 ``history.csv`` 的 ``epoch`` 列同源）。
+    """
+    p = tables / "ablation_latent_diag.csv"
+    rows = read_table(p) if p.exists() else []
+    order = {c: i for i, c in enumerate(style.ABLATION_CONFIGS)}
+    rows = sorted(rows, key=lambda r: order.get(r["config"], 99))
+
+    for r in rows:
+        r["val_recon_best_epoch"] = None
+        ep = num(r.get("best_epoch"))
+        hist = runs / f"ours_{r['config']}" / "history.csv"
+        if ep is None or not hist.exists():
+            continue
+        for h in read_table(hist):
+            if int(num(h["epoch"], -1)) == int(ep):
+                r["val_recon_best_epoch"] = num(h.get("val_recon"))
+                break
+    return rows
+
+
+def load_detect(tables: Path) -> dict[str, dict]:
+    """tag -> {pack_id -> row}，只取 fixed 口径 + test1（即下面两个 continue 条件）。
+
+    ⚠ 必须把**所有**匹配文件的行走合并：子集文件（如 ``..._pack_baseline.csv``）的
+    ``tag`` 与完整表相同，按 tag 直接赋值会被后读的覆盖掉。
+    """
+    out: dict[str, dict] = {}
+    for p in sorted(tables.glob("detection_*_train_novelty_*.csv")):
+        for r in read_table(p):
+            if r["threshold_method"] != "fixed" or r["dataset"] != "StandTestData1":
+                continue
+            try:
+                pid = int(r["pack_id"])
+            except ValueError:
+                continue
+            out.setdefault(r["tag"], {})[pid] = r
+    return out
+
+
+def load_localize(tables: Path) -> dict[str, list[dict]]:
+    """tag -> 9 行（固定聚合口径 fault_period × raw，四个组合结论一致）。"""
+    out: dict[str, list[dict]] = {}
+    for p in sorted(tables.glob("localization_*.csv")):
+        rows = [r for r in read_table(p)
+                if r["aggregation"] == "fault_period" and r["variant"] == "raw"]
+        if rows:
+            key = rows[0]["tag"]
+            out[key] = sorted(rows, key=lambda r: int(r["pack_id"]))
+    return out
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--only", nargs="*", type=int, default=None,
+                    help="只画指定编号的图，如 --only 1 3")
+    ap.add_argument("--langs", nargs="*", default=list(style.LANGS),
+                    choices=list(style.LANGS))
+    ap.add_argument("--no-pdf", action="store_true", help="只出 PNG")
+    args = ap.parse_args()
+
+    style.setup()
+    cfg = config.load()
+    out_root = Path(cfg["paths"]["outputs_dir"])
+    tables = out_root / "tables"
+    runs = out_root / "runs"
+    outdir = out_root / "figures"
+    want = set(args.only) if args.only else set(FIG_NAMES)
+    pdf = not args.no_pdf
+
+    print("=" * 78)
+    print(f"P10 出图：{sorted(want)}  语言 {args.langs}  输出 {outdir}")
+    print("=" * 78)
+
+    written: list[str] = []
+    skipped: list[str] = []
+
+    def emit(num_: int, builder):
+        """builder(lang) -> fig；对每种语言各画一次。"""
+        for lang in args.langs:
+            try:
+                fig = builder(lang)
+            except Exception as exc:  # noqa: BLE001
+                skipped.append(f"图 {num_} [{lang}]：{type(exc).__name__}: {exc}")
+                print(f"  [skip] 图 {num_} [{lang}] {type(exc).__name__}: {exc}")
+                continue
+            paths = style.save(fig, outdir, FIG_NAMES[num_], lang, pdf=pdf)
+            written.extend(paths)
+            print(f"  [ok]   图 {num_} [{lang}] -> " + ", ".join(Path(x).name for x in paths))
+
+    if 1 in want:
+        trade = load_tradeoff(tables)
+        if not trade:
+            skipped.append("图 1：没有 tradeoff_*.csv")
+            print("  [skip] 图 1：没有 tradeoff_*.csv")
+        else:
+            emit(1, lambda lang: plots.fig_tradeoff(trade, lang))
+
+    if 2 in want:
+        diag = load_latent(tables, runs)
+        if not diag:
+            skipped.append("图 2：没有 ablation_latent_diag.csv")
+            print("  [skip] 图 2：没有 ablation_latent_diag.csv")
+        else:
+            miss = [r["config"] for r in diag if r.get("val_recon_best_epoch") is None]
+            if miss:
+                print(f"  [warn] 图 2：{miss} 取不到 val_recon，该面板会显示 n/a")
+            emit(2, lambda lang: plots.fig_latent(diag, lang))
+
+    if 3 in want:
+        det = load_detect(tables)
+        if not det:
+            skipped.append("图 3：没有 detection_*_train_novelty_*.csv")
+            print("  [skip] 图 3：没有 detection_*_train_novelty_*.csv")
+        else:
+            emit(3, lambda lang: plots.fig_leadtime(det, lang))
+
+    if 4 in want:
+        loc = load_localize(tables)
+        if not loc:
+            skipped.append("图 4：没有 localization_*.csv")
+            print("  [skip] 图 4：没有 localization_*.csv")
+        else:
+            emit(4, lambda lang: plots.fig_localize(loc, lang))
+
+    if 5 in want:
+        sp = tables / "pack5_series.csv"
+        if not sp.exists():
+            skipped.append(f"图 5：缺 {sp.name}（跑 scripts/09_pack5_case.py 生成）")
+            print(f"  [skip] 图 5：缺 {sp.name}")
+        else:
+            series = read_table(sp)
+            # 相关系数由序列自身的两列现算 —— 与 09 打印的是同一对数组，值必然一致
+            sc = np.array([num(x["lof_score"], float("nan")) for x in series])
+            cur = np.array([num(x["mean_abs_i"], float("nan")) for x in series])
+            ok = np.isfinite(sc) & np.isfinite(cur)
+            r = float(np.corrcoef(sc[ok], cur[ok])[0, 1]) if ok.sum() > 2 else None
+            emit(5, lambda lang: plots.fig_pack5(series, lang, corr_pack=r))
+
+    if 6 in want:
+        fp = tables / "far_dualtrack.csv"
+        if not fp.exists():
+            skipped.append("图 6：没有 far_dualtrack.csv")
+            print("  [skip] 图 6：没有 far_dualtrack.csv")
+        else:
+            emit(6, lambda lang: plots.fig_dualtrack(read_table(fp), lang))
+
+    print()
+    print("=" * 78)
+    print(f"写出 {len(written)} 个文件；跳过 {len(skipped)} 项")
+    for s in skipped:
+        print("  - " + s)
+    print("=" * 78)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

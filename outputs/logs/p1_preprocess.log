@@ -1,0 +1,80 @@
+
+========================================================================
+处理 [train] StandTrainData.mat
+========================================================================
+[mat_io] 读取 StandTrainData.mat ...
+[mat_io] 信号已分块写入 .\outputs\cache\StandTrainData\signal.npy（float32 memmap，峰值只含 float64 输入）
+  载入完成：signal(26508, 256, 20) float32  ID [6, 8, 9, 10]  时间=absent  Hiddall=(26508, 9)
+  已写入缓存：.\outputs\cache\StandTrainData
+
+  --- 回读校验（对照 diag_report2.txt）---
+    OK   窗口总数                 got=26508  want=26508
+    OK   ID 集合                got=[6, 8, 9, 10]  want=[6, 8, 9, 10]
+    OK   ID=6 窗口数             got=9127  want=9127
+    OK   ID=8 窗口数             got=11147  want=11147
+    OK   ID=9 窗口数             got=5093  want=5093
+    OK   ID=10 窗口数            got=1141  want=1141
+
+  抽检窗口 0：col1 首6步=[0.09300000220537186, 0.057999998331069946, 0.039000000804662704, 0.029999999329447746, 0.02500000037252903, 0.02199999988079071]  col2 首6步=[-0.7448999881744385, -0.8755999803543091, -0.881600022315979, -0.8755000233650208, -0.8844000101089478, -0.867900013923645]
+
+========================================================================
+处理 [test1] StandTestData1.mat
+========================================================================
+[mat_io] 读取 StandTestData1.mat ...
+[mat_io] 信号已分块写入 .\outputs\cache\StandTestData1\signal.npy（float32 memmap，峰值只含 float64 输入）
+  载入完成：signal(8110, 256, 20) float32  ID [6, 8, 9, 10]  时间=unsupported (type=MatlabOpaque, dtype=[('_TypeSystem', 'O'), ('_Class', 'O'), ('_ObjectMetadata', 'O')]) -> sidecar (numeric-as-datenum)  Hiddall=(8110, 9)
+  已写入缓存：.\outputs\cache\StandTestData1
+
+  --- 回读校验（对照 diag_report2.txt）---
+    OK   窗口总数                 got=8110  want=8110
+    OK   ID 集合                got=[6, 8, 9, 10]  want=[6, 8, 9, 10]
+    OK   ID=6 窗口数             got=1881  want=1881
+    OK   ID=8 窗口数             got=4533  want=4533
+    OK   ID=9 窗口数             got=599  want=599
+    OK   ID=10 窗口数            got=1097  want=1097
+
+  抽检窗口 0：col1 首6步=[0.3230000138282776, 0.3240000009536743, 0.3230000138282776, 0.3230000138282776, 0.3230000138282776, 0.3230000138282776]  col2 首6步=[-0.0027000000700354576, -0.0027000000700354576, -0.00279999990016222, -0.00279999990016222, -0.00279999990016222, -0.00279999990016222]
+
+========================================================================
+处理 [test2] StandTestData2.mat
+========================================================================
+[mat_io] 读取 StandTestData2.mat ...
+[mat_io] 信号已分块写入 .\outputs\cache\StandTestData2\signal.npy（float32 memmap，峰值只含 float64 输入）
+  载入完成：signal(21013, 256, 20) float32  ID [1, 2, 3, 4, 5]  时间=unsupported (type=MatlabOpaque, dtype=[('_TypeSystem', 'O'), ('_Class', 'O'), ('_ObjectMetadata', 'O')]) -> sidecar (numeric-as-datenum)  Hiddall=无
+  已写入缓存：.\outputs\cache\StandTestData2
+
+  --- 回读校验（对照 diag_report2.txt）---
+    OK   窗口总数                 got=21013  want=21013
+    OK   ID 集合                got=[1, 2, 3, 4, 5]  want=[1, 2, 3, 4, 5]
+    OK   ID=1 窗口数             got=1830  want=1830
+    OK   ID=2 窗口数             got=305  want=305
+    OK   ID=3 窗口数             got=565  want=565
+    OK   ID=4 窗口数             got=15487  want=15487
+    OK   ID=5 窗口数             got=2826  want=2826
+
+  抽检窗口 0：col1 首6步=[0.33399999141693115, 0.33399999141693115, 0.33399999141693115, 0.33500000834465027, 0.33399999141693115, 0.33399999141693115]  col2 首6步=[9.999999747378752e-05, 9.999999747378752e-05, 9.999999747378752e-05, 9.999999747378752e-05, 9.999999747378752e-05, 9.999999747378752e-05]
+
+========================================================================
+处理 [test3] StandTestData3.mat
+========================================================================
+[mat_io] 读取 StandTestData3.mat ...
+[mat_io] 信号已分块写入 .\outputs\cache\StandTestData3\signal.npy（float32 memmap，峰值只含 float64 输入）
+  载入完成：signal(40093, 256, 20) float32  ID [17, 18, 19, 20, 21]  时间=unsupported (type=MatlabOpaque, dtype=[('_TypeSystem', 'O'), ('_Class', 'O'), ('_ObjectMetadata', 'O')]) -> sidecar (numeric-as-datenum)  Hiddall=无
+  已写入缓存：.\outputs\cache\StandTestData3
+
+  --- 回读校验（对照 diag_report2.txt）---
+    OK   窗口总数                 got=40093  want=40093
+    OK   ID 集合                got=[17, 18, 19, 20, 21]  want=[17, 18, 19, 20, 21]
+    OK   ID=17 窗口数            got=2618  want=2618
+    OK   ID=18 窗口数            got=10996  want=10996
+    OK   ID=19 窗口数            got=4276  want=4276
+    OK   ID=20 窗口数            got=3870  want=3870
+    OK   ID=21 窗口数            got=18333  want=18333
+
+  抽检窗口 0：col1 首6步=[0.3310000002384186, 0.33399999141693115, 0.32899999618530273, 0.3330000042915344, 0.32899999618530273, 0.32899999618530273]  col2 首6步=[-0.006500000134110451, -0.009100000374019146, -0.009700000286102295, -0.009200000204145908, -0.009499999694526196, -0.009700000286102295]
+
+========================================================================
+缓存清单：['StandTestData1', 'StandTestData2', 'StandTestData3', 'StandTrainData']
+审计表：.\outputs\tables\p1_cache_audit.csv
+校验结果：全部通过
+========================================================================

@@ -1,0 +1,57 @@
+﻿model,tag,lof_mode,standardize,threshold_method,dataset,pack_id,n_windows,alarm_day,onset_day,lead_days,false_alarms_before_onset,windows_before_onset,far_per_window,detected,notes
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData1,6,1881,158.54814814814816,212.58958333333334,54.04143518518518,98,1685,0.058160237388724036,True,
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData1,8,4533,0.05925925925925926,13.723194444444445,13.663935185185187,90,305,0.29508196721311475,True,
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData1,9,599,8.980706018518518,3.047025462962963,-5.933680555555554,0,80,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData1,10,1097,27.33068287037037,9.888414351851852,-17.442268518518517,0,72,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData2,1,1830,750.0580787037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData2,2,305,38.50403935185185,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData2,3,565,96.84613425925926,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData2,4,15487,1.7109953703703704,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData2,5,2826,22.310532407407408,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData3,17,2618,0.0740625,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData3,18,10996,21.978425925925926,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData3,19,4276,17.831041666666668,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData3,20,3870,33.05865740740741,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,fixed,StandTestData3,21,18333,0.1183912037037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData1,6,1881,153.10914351851852,212.58958333333334,59.480439814814815,174,1685,0.10326409495548962,True,
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData1,8,4533,0.05925925925925926,13.723194444444445,13.663935185185187,96,305,0.31475409836065577,True,
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData1,9,599,4.541423611111111,3.047025462962963,-1.4943981481481479,0,80,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData1,10,1097,26.212569444444444,9.888414351851852,-16.32415509259259,0,72,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData2,1,1830,750.0580787037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData2,2,305,333.97206018518517,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData2,3,565,72.1909837962963,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData2,4,15487,1.7109953703703704,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData2,5,2826,12.243171296296296,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData3,17,2618,0.0740625,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData3,18,10996,24.912731481481483,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData3,19,4276,17.831041666666668,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData3,20,3870,33.05865740740741,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,quantile_regression,StandTestData3,21,18333,0.1183912037037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData1,6,1881,158.54814814814816,212.58958333333334,54.04143518518518,98,1685,0.058160237388724036,True,
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData1,8,4533,0.05925925925925926,13.723194444444445,13.663935185185187,87,305,0.28524590163934427,True,
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData1,9,599,8.980706018518518,3.047025462962963,-5.933680555555554,0,80,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData1,10,1097,27.33068287037037,9.888414351851852,-17.442268518518517,0,72,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData2,1,1830,750.0580787037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData2,2,305,38.50403935185185,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData2,3,565,96.84613425925926,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData2,4,15487,1.6671296296296296,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData2,5,2826,22.310532407407408,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData3,17,2618,0.0740625,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData3,18,10996,21.963599537037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData3,19,4276,17.831041666666668,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData3,20,3870,33.05865740740741,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,binned_quantile,StandTestData3,21,18333,0.1183912037037037,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData1,6,1881,158.54814814814816,212.58958333333334,54.04143518518518,111,1685,0.06587537091988131,True,
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData1,8,4533,,13.723194444444445,,0,305,0.0,False,
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData1,9,599,12.019722222222223,3.047025462962963,-8.972696759259259,0,80,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData1,10,1097,31.91865740740741,9.888414351851852,-22.03024305555556,0,72,0.0,True,
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData2,1,1830,1002.5361805555556,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData2,2,305,,,,0,0,nan,False,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData2,3,565,96.87575231481482,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData2,4,15487,361.24881944444445,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData2,5,2826,755.3765856481482,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData3,17,2618,146.11166666666668,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData3,18,10996,125.46621527777778,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData3,19,4276,,,,0,0,nan,False,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData3,20,3870,77.97527777777778,,,0,0,nan,True,无起点标签（无 Hiddall）
+ours,ours_no_late_no_kl,train_novelty,True,pack_baseline,StandTestData3,21,18333,267.6025115740741,,,0,0,nan,True,无起点标签（无 Hiddall）

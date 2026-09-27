@@ -1,0 +1,5 @@
+﻿pack_id,description,cells_expected,n_total,n_train,boundary_ok,onset_point,onset_early,onset_late,stable_cells,unstable_cells,onset_in_test1,per_cell_point_median
+6,Increased internal resistance (Cell 8),[8],11008,9127,True,10812,10429,10941,[8],[],True,{8: 10812}
+8,Increased internal resistance (all cells),[],15680,11147,True,11452,11217,12902,"[3, 4, 5, 6]",[],True,"{3: 11973, 4: 15039, 5: 13413, 6: 11452}"
+9,Increased internal resistance (Cell 2),[2],5692,5093,True,5173,4928,5361,[2],"[1, 8]",True,"{1: 2079, 2: 5173, 8: 3287}"
+10,Increased IR (Cell 8); Abnormal voltage (Cell 7),"[8, 7]",2238,1141,True,1213,1182,1275,"[1, 8]",[2],True,"{1: 1930, 2: 769, 8: 1213}"

@@ -1,0 +1,15 @@
+﻿model,tag,lof_mode,standardize,threshold_method,dataset,pack_id,n_windows,alarm_day,onset_day,lead_days,false_alarms_before_onset,windows_before_onset,far_per_window,detected,notes
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData1,6,1881,,212.58958333333334,,0,1685,0.0,False,
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData1,8,4533,53.01208333333334,13.723194444444445,-39.28888888888889,0,305,0.0,True,
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData1,9,599,,3.047025462962963,,0,80,0.0,False,
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData1,10,1097,,9.888414351851852,,0,72,0.0,False,
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData2,1,1830,,,,0,0,nan,False,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData2,2,305,,,,0,0,nan,False,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData2,3,565,,,,0,0,nan,False,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData2,4,15487,2.7999189814814813,,,0,0,nan,True,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData2,5,2826,,,,0,0,nan,False,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData3,17,2618,146.15612268518518,,,0,0,nan,True,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData3,18,10996,125.36251157407408,,,0,0,nan,True,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData3,19,4276,,,,0,0,nan,False,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData3,20,3870,,,,0,0,nan,False,无起点标签（无 Hiddall）
+lfaae,lfaae,per_pack,True,per_pack_self,StandTestData3,21,18333,267.6025115740741,,,0,0,nan,True,无起点标签（无 Hiddall）

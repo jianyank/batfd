@@ -1,0 +1,39 @@
+﻿dataset,which,item,got,want,ok
+StandTrainData,train,窗口总数,26508,26508,True
+StandTrainData,train,ID 集合,"[6, 8, 9, 10]","[6, 8, 9, 10]",True
+StandTrainData,train,ID=6 窗口数,9127,9127,True
+StandTrainData,train,ID=8 窗口数,11147,11147,True
+StandTrainData,train,ID=9 窗口数,5093,5093,True
+StandTrainData,train,ID=10 窗口数,1141,1141,True
+StandTrainData,train,signal_shape,"(26508, 256, 20)",n/a,True
+StandTrainData,train,time_status,absent,n/a,True
+StandTrainData,train,has_hidden,True,n/a,True
+StandTestData1,test1,窗口总数,8110,8110,True
+StandTestData1,test1,ID 集合,"[6, 8, 9, 10]","[6, 8, 9, 10]",True
+StandTestData1,test1,ID=6 窗口数,1881,1881,True
+StandTestData1,test1,ID=8 窗口数,4533,4533,True
+StandTestData1,test1,ID=9 窗口数,599,599,True
+StandTestData1,test1,ID=10 窗口数,1097,1097,True
+StandTestData1,test1,signal_shape,"(8110, 256, 20)",n/a,True
+StandTestData1,test1,time_status,"unsupported (type=MatlabOpaque, dtype=[('_TypeSystem', 'O'), ('_Class', 'O'), ('_ObjectMetadata', 'O')]) -> sidecar (numeric-as-datenum)",n/a,True
+StandTestData1,test1,has_hidden,True,n/a,True
+StandTestData2,test2,窗口总数,21013,21013,True
+StandTestData2,test2,ID 集合,"[1, 2, 3, 4, 5]","[1, 2, 3, 4, 5]",True
+StandTestData2,test2,ID=1 窗口数,1830,1830,True
+StandTestData2,test2,ID=2 窗口数,305,305,True
+StandTestData2,test2,ID=3 窗口数,565,565,True
+StandTestData2,test2,ID=4 窗口数,15487,15487,True
+StandTestData2,test2,ID=5 窗口数,2826,2826,True
+StandTestData2,test2,signal_shape,"(21013, 256, 20)",n/a,True
+StandTestData2,test2,time_status,"unsupported (type=MatlabOpaque, dtype=[('_TypeSystem', 'O'), ('_Class', 'O'), ('_ObjectMetadata', 'O')]) -> sidecar (numeric-as-datenum)",n/a,True
+StandTestData2,test2,has_hidden,False,n/a,True
+StandTestData3,test3,窗口总数,40093,40093,True
+StandTestData3,test3,ID 集合,"[17, 18, 19, 20, 21]","[17, 18, 19, 20, 21]",True
+StandTestData3,test3,ID=17 窗口数,2618,2618,True
+StandTestData3,test3,ID=18 窗口数,10996,10996,True
+StandTestData3,test3,ID=19 窗口数,4276,4276,True
+StandTestData3,test3,ID=20 窗口数,3870,3870,True
+StandTestData3,test3,ID=21 窗口数,18333,18333,True
+StandTestData3,test3,signal_shape,"(40093, 256, 20)",n/a,True
+StandTestData3,test3,time_status,"unsupported (type=MatlabOpaque, dtype=[('_TypeSystem', 'O'), ('_Class', 'O'), ('_ObjectMetadata', 'O')]) -> sidecar (numeric-as-datenum)",n/a,True
+StandTestData3,test3,has_hidden,False,n/a,True

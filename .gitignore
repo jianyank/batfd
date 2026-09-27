@@ -1,0 +1,40 @@
+# =============================================================================
+# pypack 对外发布用 .gitignore
+# 原则：只入库「源码 + 结果证据（小）+ 英文 PNG」；
+#       一切可由数据重新生成的中间产物、以及体积超限的原始数据，都不入库。
+# =============================================================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.utf8.bak
+
+# ---- 中间产物：可由 .mat 重新生成，实测 1.9 GB ----
+outputs/cache/
+outputs/runs/**/recon/
+outputs/runs/**/*.pt
+outputs/runs/**/*.pth
+
+# ---- 原始数据：四个 .mat 合计 790 MB，且 gzip 比率 1.00～1.01（不可压缩），
+#      单文件最大 347 MB，远超 GitHub 单文件 100 MB 硬限。
+#      获取方式见 README「数据」一节；本仓库不含数据。
+data/
+*.mat
+*.zip
+
+# ---- 图表：只入库英文 PNG（中文版与投稿用矢量 PDF 留在本地）----
+outputs/figures/*
+!outputs/figures/*_en.png
+
+# ---- 内部工作记录，不对外发布 ----
+WORKLOG.md
