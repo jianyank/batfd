@@ -258,11 +258,12 @@ m≥5 上缓慢退化让整包一起漂移、自参照密度变化很小，真�
 ### 4. 图表
 
 六张图。`scripts/10_figures.py` 一次生成中英双版、PNG（300 dpi）+ PDF（矢量，
-字体按 Elsevier 要求嵌入为 TrueType），且**只读 `outputs/tables/*.csv`、
-不重算任何指标**，图与表不可能对不上。
+字体按 Elsevier 要求嵌入为 TrueType），且**只读所选实验的表格、不重算任何指标**。
+本节展示的是历史产物，来源为 `outputs/tables/*.csv`；新结果使用下文的实验 ID 选择。
 
 **本仓库只随附英文 PNG**（本节下图六张，另有图 0 一张，见 1 节）。中文版与投稿用的矢量 PDF 未随仓库发布，
-跑一次 `10_figures.py` 即可重新生成全部四种文件。
+显式运行 `python scripts/10_figures.py --allow-legacy` 可基于历史表重新生成中英双版 PNG/PDF，
+结果写入独立选择目录，不覆盖本节随附图片。
 
 本节只讲这六张**结果图**。另有 **图 0（方法总览）** 是手绘示意、**不由 `10_figures.py`
 生成、也不含任何实验数值**，见图 1 节。
@@ -384,14 +385,52 @@ python scripts/06_far_dualtrack.py  # P6 双轨虚警报告
 python scripts/07_localize.py       # P7 单体定位评估
 python scripts/08_tradeoff.py       # P8 权衡曲线
 python scripts/09_pack5_case.py     # P9 pack 5 案例（同时导出画图用的全序列）
-python scripts/10_figures.py        # P10 出图（中英双版 PNG + PDF）
+python scripts/10_figures.py --experiment-ids 实际实验ID  # P10 使用 P5–P9 打印的实验 ID
 ```
 
 各阶段实测耗时见上（P3 1259.4 s、P4 约 2h11m），产物落在 `outputs/` 对应子目录
-（`cache/` `runs/` `tables/` `figures/` `logs/`）。
+（`cache/` `runs/` `tables/` `experiments/` `figures/` `logs/`）。
 
 `10_figures.py` 支持 `--only 1 3`（只画指定编号）、`--langs zh`、`--no-pdf`。
-数据缺失的图会**跳过并打印原因**，不会画一张空图。
+数据缺失的图会**跳过并打印原因**，不会画一张空图；运行后检查选择清单中的 `skipped`，
+不能仅凭退出码认定所有图已生成。
+
+#### 实验可信度升级（2026-09-29）
+
+本次只改缓存、产物来源及评估字段，**不改变模型/训练切分/阈值算法，不重训，也不改写历史实验数值**。
+已有 checkpoint 可以继续使用；升级后的下游步骤必须先重跑 P5，再运行 P6–P9。
+
+- **缓存失效**：重建校验 checkpoint、实际模型状态、输入信号/ID、关键配置与实现内容；
+  指标校验实际重建内容与代次。使用分块 SHA-256，而非仅凭路径、时间或文件大小。
+  旧缓存没有清单时首次重算；损坏或过期缓存不得静默读取。
+  `--force-recon` 同时使指标重新计算。内容哈希增加顺序 I/O，**同一 tag 不支持并发写缓存**。
+- **实验身份**：P5–P9 打印实验 ID；相同权重、有效配置、数据/标签、代码及运行库版本归入同一实验。
+  修改源码内容会改变实验 ID，Git commit 只用于审计。更换 tag 下的权重也不会冒用旧实验。
+- **独立产物**：新表写入 `outputs/experiments/<实验ID>/tables/<阶段>_<产物ID>.csv`；
+  同目录 JSON 校验表格字节、参数、实验身份与缓存快照。参数、结果或重建代次改变会生成新产物，
+  不覆盖旧表。`experiment.json` 保存实验输入清单；历史表仍保留在 `outputs/tables/`。
+- **明确出图来源**：P10 必须选择 `--experiment-ids ID [ID ...]` 或 `--allow-legacy`，二者互斥。
+  同一实验有多份相同口径产物时，用 `--artifact-ids ID [ID ...]` 明确选择，不自动挑“最新”。
+  新图与 `selection.json` 位于 `outputs/figures/selections/<选择ID>/`，不会改写历史图片。
+  历史模式明确不保证来源可核验，不与新实验混用。P4 消融表尚未迁入可核验产物链，
+  **图 2 暂时只在显式历史模式中读取**。
+
+以下命令中的 ID 需替换为实际输出；产物 ID 也在 CSV/同名 JSON 中记录：
+
+```bash
+python scripts/10_figures.py --experiment-ids 实际实验ID --only 6 --langs en --no-pdf
+python scripts/10_figures.py --experiment-ids 实际实验ID --artifact-ids 实际产物ID --only 6
+python scripts/10_figures.py --allow-legacy --only 2
+python -X utf8 -B -m unittest discover -s tests -v
+```
+
+回归测试不读取真实训练数据或权重；端到端冒烟使用临时目录、合成数组及随机初始化的真实 LFAAE，
+跑通 P5–P10，不训练、不把合成数值当作研究结果。分步记录见
+[实施日志](docs/changes/2026-09-29-experiment-integrity.md)。
+
+**既有发布限制**：当前 `.gitignore` 的 `data/` 规则同时忽略 `batfd/data/`，本地存在的该源码包尚未纳入 Git。
+本轮没有顺手改变忽略规则或提交这些既有文件，因此测试通过仅说明当前工作区可运行，
+**不代表干净克隆已能复现**；发布前应单独修正并验证。
 
 ### 4. 目录
 
@@ -402,6 +441,8 @@ pypack/
   data/                      四个 Stand*.mat 的落点（790 MB，需自行索取；已 gitignore）
   batfd/
     config.py                配置加载
+    provenance.py            内容指纹与缓存完整性清单
+    experiments.py           实验 ID、独立产物与来源校验
     console.py               强制 UTF-8 输出
     progress.py              进度条（重定向到文件时自动关闭动画）
     robust.py                多估计量稳健尺度（应对重尾）
@@ -417,6 +458,7 @@ pypack/
       train.py               自定义训练循环
       inference.py           批量重建（带磁盘缓存）
     features/fault_metric.py 论文 §2.3 的三个指标
+    features/cache.py        指标缓存依赖与代次校验
     detect/
       lof.py                 LOF 两种模式 + 持久性规则
       threshold.py           固定分位数 / 条件分位数阈值
@@ -430,7 +472,10 @@ pypack/
       doavi.py               占位 + 完整不实现理由 + 真实引文
     viz/                     六张结果图（style 负责字体/标签，plots 负责画）
   scripts/                   00 → 10 阶段入口脚本
-  outputs/                   cache / runs / tables / figures / logs
+  tests/                     标准库 unittest 回归与临时端到端冒烟
+  outputs/                   cache / runs / tables / experiments / figures / logs
+    experiments/<ID>/        experiment.json + 独立 tables/ 及产物清单
+    figures/selections/<ID>/ 所选产物的新图 + selection.json
     figures/                 图 0 方法总览（手绘）+ 图 1..6 结果图，均为英文 PNG
 ```
 
@@ -444,14 +489,15 @@ pypack/
    （论文未给）、LOF 输入是否标准化（论文未说）、激活函数与 BN（Table 1 未列）、
    「检测日」的持久性规则（论文未说明）。这些都在相应模块的 docstring 里写明，
    报告中必须同样声明。
-4. ⚠ **`detected` 在本项目有两个定义，交叉阅读两张表会踩。**
-   `batfd/eval/metrics.py` 的 `detected = alarm_idx is not None`（**是否报过警**，
-   含晚于起点的报警），用于 `05_detect.py` 及其 CSV 的 `detected` 列；
-   `scripts/08_tradeoff.py` 的 `detected = ai is not None and ai < onset_local`
-   （**起点前就报警**），用于权衡曲线 —— 那里「检出」必须含时效性。
-   两者都合理，但**不可混读**：本文 3.2 表的「提前检出 2/4」用的是后者，
-   而 `detection_*.csv` 的 `detected` 列对同样这批数据给出 **4/4**。
-   不是矛盾，是口径不同。**引用检出率时必须同时写明出处脚本。**
+4. **新输出明确区分“曾报警”和“提前检出”**：`alarm_ever` 表示出现过确认报警；
+   `early_detected` 仅在确认报警严格早于有效起点时为 `True`，等于/晚于起点为 `False`，
+   无有效起点为 `None`（CSV 空值）。`early_detection_rate` 的分母仅含有效起点标签。
+   `trigger_rate_before_onset` 是起点前触发率，**不是轨 A 真虚警率**；两轨不得合并。
+   旧 Python 属性 `detected` / `far_per_window` 仍可读取但会发出弃用警告，新 CSV 不导出它们。
+   **历史表解释不变**：旧 `detection_*.csv` 的 `detected` 是“是否报过警”（含晚报警），
+   旧权衡表 `detection_rate` 是“是否提前报警”。本文 3.2 的“提前检出 2/4”采用后者，
+   同批历史检测表的 `detected` 为 **4/4**；不是矛盾，是口径不同。
+   P10 仅在显式历史模式下兼容旧权衡列，引用历史检出率仍需写明出处与定义。
 
 ### 6. 已知且无法消除的局限
 

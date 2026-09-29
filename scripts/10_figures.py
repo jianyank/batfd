@@ -1,12 +1,12 @@
-"""P10：把 outputs/tables 的结果画成图（中英双版本）。只读表、**不重算任何指标**，数字都
-来自 ``outputs/tables/*.csv`` —— 唯一例外是图 5 需要 pack 5 的**逐窗口完整序列**
-（``pack5_case.csv`` 只有分数前 15 名、不含最早越限窗口），该序列由 ``scripts/09_pack5_case.py``
-导出为 ``pack5_series.csv``，本脚本只读它，以免在绘图脚本里重写一遍 LOF 计算、两份实现漂移。
+"""P10：从明确选择的实验表绘制中英双版结果图，不重算任何指标。
 
-输出 ``outputs/figures/<fig>_<lang>.png``（300dpi，看）与 ``.pdf``（矢量，投稿），``lang`` ∈
-{zh, en}；数据缺失的图**跳过并打印原因**，不画空图。
+新表来自 outputs/experiments/<id>/tables/，逐表校验来源；--allow-legacy 才读取历史
+outputs/tables/，不与新实验混用。图 5 的完整逐窗口序列由 P9 导出，本脚本不重算 LOF。
+输出 outputs/figures/selections/<selection-id>/ 下的 PNG（300dpi）、PDF 与 selection.json，
+不覆盖历史图片；数据缺失的图跳过并记录原因。P4 历史消融图 2 仅在历史模式可用。
 
-用法：``python scripts/10_figures.py [--only 1 3] [--no-pdf] [--langs zh en]``
+用法：python scripts/10_figures.py --experiment-ids ID [--only 1 3] [--no-pdf] [--langs zh en]
+历史：python scripts/10_figures.py --allow-legacy
 """
 
 from __future__ import annotations

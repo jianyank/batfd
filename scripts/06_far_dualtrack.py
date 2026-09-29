@@ -1,4 +1,4 @@
-"""P6：双轨虚警率（回应 §5.2）。产出 ``outputs/tables/far_dualtrack.csv``：每个阈值方法 ×
+"""P6：双轨虚警率（回应 §5.2）。产出 ``outputs/experiments/<id>/tables/far_dualtrack_<artifact>.csv``：每个阈值方法 ×
 每个有起点标签的包（pack 6/8/9/10）各一行，给出两轨数字 —— 轨 A ``A_far`` = 训练集已知
 正常期上的**真虚警率（留一口径）**；轨 B ``B_trigger_rate`` = test1 起点之前窗口上的
 **触发率（不是虚警率）**。

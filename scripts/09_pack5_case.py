@@ -6,7 +6,7 @@ LOF 的 99 分位」在同一类工况下会不会也被击穿？
 eval/metrics.py 的口径声明），只能用「距本包首条记录的天数」。两者不是同一个零点，故不能
 声称「复现了第 94 天那一刻」，能复现的只是**机制**（高电流脉冲窗口是否把分数推过固定阈值、
 ``pack_baseline`` 能否把它压回去）；此区分必须写进报告。实测结论（跑一次即得，此处不复述数字、
-以免与运行结果脱节）见脚本输出与 ``outputs/tables/pack5_case.csv``。
+以免与运行结果脱节）见脚本输出与 ``outputs/experiments/<id>/tables/pack5_case_<artifact>.csv``。
 
 用法：``python scripts/09_pack5_case.py [--tag TAG]``
 """

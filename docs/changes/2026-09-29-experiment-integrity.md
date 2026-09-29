@@ -41,3 +41,34 @@
 - 起点前计数/比率改名 confirmed_before_onset / trigger_rate_before_onset，不改变数值算法；轨 A 的 A_far 和轨 B 的 B_trigger 保持区分。
 - PackEval.detected 和 far_per_window 只保留带 DeprecationWarning 的旧属性兼容；新 CSV 不再写含义模糊字段。旧权衡表 detection_rate 仅在显式历史模式中映射到 early_detection_rate，历史 CSV 不改写。
 - 红灯：9 个新增场景首次因缺少新字段/兼容警告失败；绿灯：累计 40 项测试通过，退出码 0。覆盖无报警、提前/恰好起点/晚报警、无标签/非法起点、持久性确认时点、分母与旧表显式兼容。
+
+## 步骤 4a：临时数据端到端冒烟（完成）
+
+- 2026-09-29：新增 tests/test_pipeline_smoke.py，使用 CPU 上真实 LFAAE 随机权重、四份合成数据缓存、真实重建/指标/LOF/评估/绘图组件；仅替换配置、CLI 参数与 CUDA 可用性边界。未训练模型。
+- P5–P9 六类表归属同一实验；P10 明确选择双轨产物后实际生成英文 PNG 与 selection.json。校验新评估字段、普通重跑缓存命中、force 改变代次且旧表不变、旧表/旧图/标签及 checkpoint 字节未变。
+- 测试文件初次执行因生成时字符串换行转义错误报 SyntaxError，修正测试本身后单项端到端测试通过（退出码 0，unittest 用时 6.987 秒）。未将该错误当作业务回归缺陷。
+- 所有产物位于 TemporaryDirectory，退出时清理；合成数值不作为项目实验结论。尚待 README 更新、全量回归及最终提交。
+
+## 步骤 4b：迁移说明与最终验收（完成）
+
+- README 已补缓存升级/重算要求、实验与产物 ID、新路径、P10 显式来源选择/消歧、历史图 2 限制、统一字段和回归命令；原实验数值与历史语义保留。P6/P9/P10 与绘图模块顶部路径说明同步订正。
+- 2026-09-29，使用 D:/Python/miniconda3/envs/batfd/python.exe -X utf8 -B -m unittest discover -s tests -v：**41 项全部通过**，退出码 0，unittest 用时 **7.905 秒**（不含解释器导入时间）。其中 16 项缓存、15 项产物、9 项语义、1 项真实组件集成冒烟。
+- 本轮全部 17 个变更/新增 Python 文件 AST 解析通过；P5–P10 六个 --help 入口逐个退出码 0；git diff --check ae335d4 通过。Git 的 LF/CRLF 提示是本机换行策略提示，未改动该策略。
+- git diff --exit-code ae335d4 -- outputs 退出码 0；验收前后实际 outputs 的 **304 个文件**路径/大小/mtime 均一致（这是元数据核对，不宣称对忽略文件逐字节复核）。main 仍为 ae335d458d90ce968e11482b53d3d06efb5f1b84；未训练、未修改真实权重/数据、未合并或推送。
+- 已知发布阻碍：git check-ignore -v batfd/data/cache.py 确认 .gitignore:31 的裸 data/ 同时忽略 batfd/data/；git ls-files batfd/data 未列出源码。该目录本地存在，不是空目录。本轮按边界不改忽略规则、不强制纳入既有源码；因此只能声明当前工作区测试通过，不能声明干净克隆可复现。
+- 另记录既有边界风险：P9 固定阈值输出直接格式化 days[ai]，未像逐包基线分支那样处理 ai 为 None 的无报警情形。本轮冒烟包含实际报警，未验证该无报警分支；该问题不属本轮产物身份/字段变更，未顺手修复。
+- 尚未覆盖真实全量数据重算、CUDA 数值路径、完整训练、干净克隆及并发写缓存；这些不作为本阶段验收结论。已有单元测试覆盖明确历史读取，本次集成实际绘制新模式英文图 6，不冒称已重绘全部图。
+
+## 分步提交与回退
+
+| 提交 | 完成内容 |
+|---|---|
+| ba6cd0d | 独立分支上的计划与初始日志 |
+| 529a641 | 缓存内容指纹及级联失效 |
+| 4ac204c | 实验身份、独立产物与来源选择 |
+| cbdba46 | 报警/提前检出语义统一 |
+| 本日志所在的最终验收提交（test: verify experiment pipeline and document migration） | 端到端测试、README 迁移说明、验收记录 |
+
+当前工作保留在 codex/experiment-integrity，main 不动。只需回到原方案时，在工作区干净的前提下执行 git switch main，分支与提交仍保留。
+若之后已合并并需要撤销，按依赖倒序对最终验收、cbdba46、4ac204c、529a641 使用 git revert；日志/计划提交可保留作审计。
+不使用 reset --hard 或删除历史产物来“回退”。提交号可用 git log --oneline main..codex/experiment-integrity 查验。
