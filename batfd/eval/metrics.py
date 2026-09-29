@@ -7,9 +7,8 @@
    论文数据的子集（截止 2019-11，论文称到 2022-03），绝对天数**无法复现**。这里一律
    用「距本包首条记录的天数」，且所有方法在**同一批窗口**上比较 —— 方法间的相对提前量
    因此公平，而绝对数字不与论文表格直接可比（报告中必须写明）。
-2. **虚警率的估计基础是「起点之前的窗口」。** 数据集里没有真正无故障的包，但没有任何
-   包的故障起点之前是正常的，这是 by construction 成立的，因此虚警率在起点之前的窗口上
-   统计。⚠ 起点前窗口并非正常期，真虚警率见 eval/dualtrack.py 的双轨口径。
+2. **起点之前只统计触发率，不称为真虚警率。** 起点标签前可能已有退化；
+   真虚警率只在独立已知正常期上估计，见 eval/dualtrack.py 的轨 A。
 3. **报警 = 连续 m 个窗口越限**（持久性规则）。论文的「检测日」隐含了某种此类规则但未
    说明具体形式；把它显式化并让所有方法共用，比较才公平。
 """
@@ -17,6 +16,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import warnings
 
 import numpy as np
 
@@ -34,11 +34,26 @@ class PackEval:
     onset_index: int | None          # 本包窗口序列内的下标
     onset_day: float | None
     lead_days: float | None          # onset_day − alarm_day，正数表示报警早于起点
-    n_confirmed_before_onset: int    # 起点之前的确认报警次数（虚警计数）
+    n_confirmed_before_onset: int    # 起点之前的确认报警窗口数
     n_windows_before_onset: int
-    far_per_window: float            # 起点前虚警率
-    detected: bool
+    trigger_rate_before_onset: float
+    alarm_ever: bool                 # 任何时刻有确认报警，包括晚于起点
+    early_detected: bool | None      # 严格早于起点；无有效起点标签时未知
     notes: list[str] = field(default_factory=list)
+
+    @property
+    def detected(self) -> bool:
+        """仅兼容旧 P5 API：曾报警，不等于提前检出；新 CSV 不再导出此字段。"""
+        warnings.warn("detected 仅表示曾报警，请改用 alarm_ever 或 early_detected",
+                      DeprecationWarning, stacklevel=2)
+        return self.alarm_ever
+
+    @property
+    def far_per_window(self) -> float:
+        """仅兼容旧 API；此值是起点前触发率，不是真虚警率。"""
+        warnings.warn("请使用 trigger_rate_before_onset；真虚警率见轨 A",
+                      DeprecationWarning, stacklevel=2)
+        return self.trigger_rate_before_onset
 
 
 def pack_order(cache: dict, pid: int, *, sort_by_time: bool = True) -> np.ndarray:
@@ -72,7 +87,7 @@ def evaluate_pack(
     onset_index: int | None = None,
     onset_source: str = "",
 ) -> PackEval:
-    """在单个包的窗口序列上算报警、提前量、虚警率。
+    """在单个包的窗口序列上算报警、提前量、起点前触发率。
 
     Parameters
     ----------
@@ -104,7 +119,7 @@ def evaluate_pack(
     if onset_index is None and onset_source:
         notes.append(f"无起点标签（{onset_source}）")
 
-    far = (n_before / n_win_before) if n_win_before > 0 else float("nan")
+    trigger_rate = (n_before / n_win_before) if n_win_before > 0 else float("nan")
     return PackEval(
         pack_id=pack_id,
         n_windows=n,
@@ -115,8 +130,10 @@ def evaluate_pack(
         lead_days=lead,
         n_confirmed_before_onset=n_before,
         n_windows_before_onset=n_win_before,
-        far_per_window=far,
-        detected=alarm_idx is not None,
+        trigger_rate_before_onset=trigger_rate,
+        alarm_ever=alarm_idx is not None,
+        early_detected=(alarm_idx is not None and alarm_idx < onset_index)
+        if onset_index is not None else None,
         notes=notes,
     )
 
@@ -131,18 +148,21 @@ def summarize(evals: list[PackEval]) -> dict:
     return {
         "n_packs": len(evals),
         "n_packs_with_onset_label": len(labelled),
-        "n_detected": sum(e.detected for e in evals),
-        "n_detected_labelled": sum(e.detected for e in labelled),
+        "n_alarm_ever": sum(e.alarm_ever for e in evals),
+        "n_alarm_ever_labelled": sum(e.alarm_ever for e in labelled),
+        "n_early_detected": sum(bool(e.early_detected) for e in labelled),
+        "early_detection_rate": (sum(bool(e.early_detected) for e in labelled) / len(labelled))
+        if labelled else None,
         # 提前量：只在既有标签又有报警的包上统计
         "n_lead_samples": len(leads),
         "lead_days_median": float(np.median(leads)) if leads else None,
         "lead_days_min": float(np.min(leads)) if leads else None,
         "lead_days_max": float(np.max(leads)) if leads else None,
         "n_lead_positive": sum(l > 0 for l in leads),
-        # 起点前虚警率：分母是「有标签的包的起点前窗口总数」
-        "far_per_window": (far_hit / far_win) if far_win > 0 else None,
-        "far_windows": far_win,
-        "far_hits": far_hit,
+        # 起点前触发率：分母是「有标签的包的起点前窗口总数」
+        "trigger_rate_before_onset": (far_hit / far_win) if far_win > 0 else None,
+        "windows_before_onset": far_win,
+        "confirmed_before_onset": far_hit,
     }
 
 

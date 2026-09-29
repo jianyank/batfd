@@ -31,7 +31,7 @@ def fig_tradeoff(tradeoff: dict[str, dict], lang: str, *, per_pack_tag: str | No
         # per_pack 作对照（仅基线有数据）
         if per_pack_tag and per_pack_tag in tradeoff and "per_pack" in tradeoff[per_pack_tag]:
             pk = tradeoff[per_pack_tag]["per_pack"]
-            pts = sorted((r["trigger_rate_before_onset"] * 100, r["detection_rate"] * 100)
+            pts = sorted((r["trigger_rate_before_onset"] * 100, r["early_detection_rate"] * 100)
                          for (q, mm), r in pk.items() if mm == m)
             if pts:
                 ax.plot([p[0] for p in pts], [p[1] for p in pts], ls="--",
@@ -40,7 +40,7 @@ def fig_tradeoff(tradeoff: dict[str, dict], lang: str, *, per_pack_tag: str | No
 
         for t in models:
             rows = tradeoff[t]["train_novelty"]
-            pts = sorted(((r["trigger_rate_before_onset"] * 100, r["detection_rate"] * 100, q)
+            pts = sorted(((r["trigger_rate_before_onset"] * 100, r["early_detection_rate"] * 100, q)
                           for (q, mm), r in rows.items() if mm == m), key=lambda z: z[0])
             if not pts:
                 continue

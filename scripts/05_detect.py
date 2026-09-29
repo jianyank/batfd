@@ -313,7 +313,7 @@ def main() -> int:
                     f"报警={'第 %.1f 天' % ev.alarm_day if ev.alarm_day is not None else '无':>12}  "
                     f"起点={'第 %.1f 天' % ev.onset_day if ev.onset_day is not None else '—':>12}  "
                     f"提前={'%.1f 天' % ev.lead_days if ev.lead_days is not None else '—':>9}  "
-                    f"起点前虚警={ev.n_confirmed_before_onset}"
+                    f"起点前触发={ev.n_confirmed_before_onset}"
                     + ("  " + "; ".join(ev.notes) if ev.notes else "")
                 )
                 all_rows.append(
@@ -329,10 +329,11 @@ def main() -> int:
                         "alarm_day": ev.alarm_day,
                         "onset_day": ev.onset_day,
                         "lead_days": ev.lead_days,
-                        "false_alarms_before_onset": ev.n_confirmed_before_onset,
+                        "confirmed_before_onset": ev.n_confirmed_before_onset,
                         "windows_before_onset": ev.n_windows_before_onset,
-                        "far_per_window": ev.far_per_window,
-                        "detected": ev.detected,
+                        "trigger_rate_before_onset": ev.trigger_rate_before_onset,
+                        "alarm_ever": ev.alarm_ever,
+                        "early_detected": ev.early_detected,
                         "notes": "; ".join(ev.notes),
                     }
                 )

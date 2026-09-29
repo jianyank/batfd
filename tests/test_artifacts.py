@@ -94,7 +94,7 @@ class ArtifactTests(unittest.TestCase):
     def test_figure_loader_rejects_duplicate_variants(self):
         figures = script("10_figures")
         rows = [{"tag": "ours_full", "lof_mode": "train_novelty", "q": .99,
-                 "persistence": 1, "trigger_rate_before_onset": .1, "detection_rate": .5}]
+                 "persistence": 1, "trigger_rate_before_onset": .1, "early_detection_rate": .5}]
         self.exp.write_table("tradeoff", rows, {"q": .99})
         self.exp.write_table("tradeoff", rows, {"q": .98})
         with self.assertRaisesRegex(ValueError, "多个|歧义|重复"):

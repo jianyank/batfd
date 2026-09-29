@@ -76,7 +76,9 @@ def load_tradeoff(tables, *, allow_legacy=False, artifact_ids=None) -> dict[str,
                 raise ValueError(f"权衡表重复口径：{r['tag']} / {q} / {m}；请用 --artifact-ids 选择")
             points[(q, m)] = {
                 "trigger_rate_before_onset": num(r["trigger_rate_before_onset"], float("nan")),
-                "detection_rate": num(r["detection_rate"], float("nan")),
+                "early_detection_rate": num(
+                    r["detection_rate"] if allow_legacy and "early_detection_rate" not in r
+                    else r["early_detection_rate"], float("nan")),
             }
     return out
 

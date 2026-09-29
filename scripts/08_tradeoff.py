@@ -102,41 +102,31 @@ def evaluate_point(
         if lab["onset_point"] is None or lab["n_train"] is None:
             continue
         onset_local = lab["onset_point"] - lab["n_train"]
-        if onset_local < 0:
+        ev = metrics_mod.evaluate_pack(pid, stat_te[order], 0.0,
+                                       persistence=persistence, onset_index=onset_local)
+        if ev.onset_index is None:
             continue
         n_lab += 1
-
-        s = stat_te[order]
-        flag = s > 0.0
-        conf = lof_mod.apply_persistence(flag, persistence)
-        ai = lof_mod.first_alarm_index(conf)
-        detected = ai is not None and ai < onset_local
-        n_det += int(detected)
-
-        before = conf[:onset_local]
-        win_before += int(onset_local)
-        hit_before += int(before.sum())
-        per_pack.append(
-            {
-                "pack_id": pid,
-                "alarm_index": ai,
-                "onset_index": int(onset_local),
-                "detected": bool(detected),
-                "n_confirmed_before": int(before.sum()),
-                "n_windows_before": int(onset_local),
-            }
-        )
+        n_det += int(ev.early_detected)
+        win_before += ev.n_windows_before_onset
+        hit_before += ev.n_confirmed_before_onset
+        per_pack.append({"pack_id": pid, "alarm_index": ev.alarm_index,
+                         "onset_index": ev.onset_index, "alarm_ever": ev.alarm_ever,
+                         "early_detected": ev.early_detected,
+                         "n_confirmed_before": ev.n_confirmed_before_onset,
+                         "n_windows_before": ev.n_windows_before_onset})
 
     # 「检出」必须和「第几窗报的」一起看：per_pack 的阈值取自该包自身序列的 q 分位，
     # 按构造总有约 (1-q) 的窗口越限、最早的几个可能就在第 0 窗附近；若
     # median_alarm_index 接近 0，则「100% 检出」是构造使然而非检出能力。
-    det_alarms = [p["alarm_index"] for p in per_pack if p["detected"]]
-    det_leads = [p["onset_index"] - p["alarm_index"] for p in per_pack if p["detected"]]
+    det_alarms = [p["alarm_index"] for p in per_pack if p["early_detected"]]
+    det_leads = [p["onset_index"] - p["alarm_index"] for p in per_pack if p["early_detected"]]
 
     return {
-        "detection_rate": (n_det / n_lab) if n_lab else float("nan"),
+        "early_detection_rate": (n_det / n_lab) if n_lab else float("nan"),
         "n_labelled": n_lab,
-        "n_detected": n_det,
+        "n_early_detected": n_det,
+        "n_alarm_ever": sum(p["alarm_ever"] for p in per_pack),
         "median_alarm_index": float(np.median(det_alarms)) if det_alarms else None,
         "median_lead_windows": float(np.median(det_leads)) if det_leads else None,
         "trigger_rate_before_onset": (hit_before / win_before) if win_before else float("nan"),
@@ -184,7 +174,7 @@ def main() -> int:
         print("-" * 78)
         print(f"LOF 模式：{mode}")
         print("-" * 78)
-        print(f"{'q':>7} {'m':>4} {'阈值':>10} {'检出率':>8} {'起点前触发率':>12} "
+        print(f"{'q':>7} {'m':>4} {'阈值':>10} {'提前检出率':>8} {'起点前触发率':>12} "
               f"{'中位报警窗':>10} {'中位提前窗':>10} {'分母':>7}")
         for q in args.qs:
             for m in args.persistence:
@@ -197,8 +187,9 @@ def main() -> int:
                     "q": q, "persistence": m,
                     "threshold": r["threshold"],
                     "n_labelled": r["n_labelled"],
-                    "n_detected": r["n_detected"],
-                    "detection_rate": r["detection_rate"],
+                    "n_early_detected": r["n_early_detected"],
+                    "n_alarm_ever": r["n_alarm_ever"],
+                    "early_detection_rate": r["early_detection_rate"],
                     "median_alarm_index": r["median_alarm_index"],
                     "median_lead_windows": r["median_lead_windows"],
                     "windows_before_onset": r["windows_before_onset"],
@@ -209,7 +200,7 @@ def main() -> int:
                 thr_txt = "逐包自身" if mode == "per_pack" else f"{r['threshold']:.4f}"
                 print(
                     f"{q:>7.3f} {m:>4} {thr_txt:>10} "
-                    f"{r['detection_rate']:>7.1%} {r['trigger_rate_before_onset']:>12.2%} "
+                    f"{r['early_detection_rate']:>7.1%} {r['trigger_rate_before_onset']:>12.2%} "
                     f"{f2(r['median_alarm_index']):>10} {f2(r['median_lead_windows']):>10} "
                     f"{r['windows_before_onset']:>7}"
                 )

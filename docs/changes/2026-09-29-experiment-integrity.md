@@ -33,3 +33,11 @@
 - 绿灯：累计 31 项测试通过（退出码 0），包含历史保护、权重/配置/数据/标签隔离、清单篡改、跨目录混用和绘图歧义拒绝。
 - 入口检查发现 P7 --help 的既有百分号未转义，导致 argparse 崩溃；已补复现测试并只修正该字符。其余 P5–P10 帮助入口检查通过。
 - 边界：P4 消融历史表尚无可核验清单，P10 新模式不混入图 2 的旧数据；历史图 2 仅在显式历史模式下可用。
+
+## 步骤 3：评估字段统一（完成）
+
+- PackEval 与 P5 输出统一 alarm_ever（任何确认报警）、early_detected（确认报警严格早于起点）。无有效起点标签为 None，等于/晚于起点为 False。
+- P8 调用同一个 evaluate_pack，不再独立定义 detected；新增 n_alarm_ever、n_early_detected、early_detection_rate，分母只含有效起点标签。越界起点不再计入分母。
+- 起点前计数/比率改名 confirmed_before_onset / trigger_rate_before_onset，不改变数值算法；轨 A 的 A_far 和轨 B 的 B_trigger 保持区分。
+- PackEval.detected 和 far_per_window 只保留带 DeprecationWarning 的旧属性兼容；新 CSV 不再写含义模糊字段。旧权衡表 detection_rate 仅在显式历史模式中映射到 early_detection_rate，历史 CSV 不改写。
+- 红灯：9 个新增场景首次因缺少新字段/兼容警告失败；绿灯：累计 40 项测试通过，退出码 0。覆盖无报警、提前/恰好起点/晚报警、无标签/非法起点、持久性确认时点、分母与旧表显式兼容。
