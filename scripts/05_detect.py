@@ -33,7 +33,7 @@ from batfd.data import cache, channels, conditions as cond_mod  # noqa: E402
 from batfd.detect import lof as lof_mod  # noqa: E402
 from batfd.detect import threshold as thr_mod  # noqa: E402
 from batfd.eval import metrics as metrics_mod  # noqa: E402
-from batfd.features import fault_metric  # noqa: E402
+from batfd.features import fault_metric, cache as feature_cache  # noqa: E402
 from batfd.models import inference  # noqa: E402
 
 console.setup()
@@ -83,32 +83,8 @@ def read_labels(cfg: dict) -> dict[int, dict]:
     return out
 
 
-def get_metrics(cfg, tag, dataset_name, v_meas, v_rec):
-    """算并缓存三个故障指标（按数据集）。"""
-    d = inference.reconstruction_dir(cfg, tag) / dataset_name
-    f_feat, f_sig, f_cos, f_q3 = d / "feat.npy", d / "sigma.npy", d / "cos.npy", d / "q3.npy"
-    if all(p.exists() for p in (f_feat, f_sig, f_cos, f_q3)):
-        return (
-            np.load(f_feat, mmap_mode="r"),
-            np.load(f_sig, mmap_mode="r"),
-            np.load(f_cos, mmap_mode="r"),
-            np.load(f_q3, mmap_mode="r"),
-        )
-
-    m = fault_metric.paper_metrics(np.asarray(v_meas), np.asarray(v_rec))
-    feat = m.oriented()
-    d.mkdir(parents=True, exist_ok=True)
-    np.save(f_feat, feat.astype(np.float64))
-    np.save(f_sig, m.sigma_v.astype(np.float64))
-    np.save(f_cos, m.cos_sim.astype(np.float64))
-    np.save(f_q3, m.q3_err.astype(np.float64))
-    print(f"[metric] {dataset_name}: 指标 {feat.shape} 已缓存")
-    return (
-        np.load(f_feat, mmap_mode="r"),
-        np.load(f_sig, mmap_mode="r"),
-        np.load(f_cos, mmap_mode="r"),
-        np.load(f_q3, mmap_mode="r"),
-    )
+def get_metrics(cfg, tag, dataset_name, v_meas, v_rec, *, force=False):
+    return feature_cache.get_metrics(cfg, tag, dataset_name, v_meas, v_rec, force=force)
 
 
 PER_PACK_METHOD = "per_pack_self"
@@ -218,7 +194,7 @@ def main() -> int:
         v_meas, v_rec, _ = inference.reconstruct_dataset(
             model, cfg, caches[name], tag, name, device=device, force=args.force_recon
         )
-        feat, sig, cos, q3 = get_metrics(cfg, tag, name, v_meas, v_rec)
+        feat, sig, cos, q3 = get_metrics(cfg, tag, name, v_meas, v_rec, force=args.force_recon)
         feats[name] = np.asarray(feat)
         sigmas[name] = np.asarray(sig)
         del v_meas, v_rec

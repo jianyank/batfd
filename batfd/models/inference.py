@@ -16,7 +16,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from .. import progress
+from .. import progress, provenance
 from ..data import channels, dataset as ds_mod
 
 
@@ -96,6 +96,48 @@ def reconstruction_dir(cfg: dict, tag: str) -> Path:
     return Path(cfg["paths"]["outputs_dir"]) / "runs" / tag / "recon"
 
 
+RECON_FILES = ("v_meas.npy", "v_rec.npy", "ids.npy")
+RECON_MANIFEST = "reconstruction.json"
+
+
+def reconstruction_dependencies(cfg: dict, cache: dict, tag: str) -> dict:
+    ckpt = checkpoint_path(cfg, tag)
+    return {
+        "schema_version": 1,
+        "checkpoint_sha256": provenance.file_digest(ckpt) if ckpt.exists() else None,
+        "config": provenance.digest({k: cfg.get(k) for k in ("data", "channels", "hidden", "model")}),
+        "signal": provenance.array_digest(cache["signal"]),
+        "ids": provenance.array_digest(cache["ids"]),
+        "implementation": provenance.source_digest([
+            "batfd/provenance.py", "batfd/models/inference.py", "batfd/models/cell_ae.py",
+            "batfd/models/train.py", "batfd/baselines/lfaae.py",
+            "batfd/data/dataset.py", "batfd/data/channels.py",
+        ]),
+        "numpy": np.__version__, "torch": str(torch.__version__),
+    }
+
+
+def model_fingerprint(model) -> str:
+    return provenance.digest({
+        "class": f"{type(model).__module__}.{type(model).__qualname__}",
+        "state": {k: provenance.array_digest(v.detach().cpu().numpy())
+                  for k, v in model.state_dict().items()},
+    })
+
+
+def load_reconstruction(cfg: dict, cache: dict, tag: str, dataset_name: str, *, mmap=True):
+    """下游只读取与当前权重/数据/配置一致的缓存；不替来源不明旧缓存补身份。"""
+    d = reconstruction_dir(cfg, tag) / dataset_name
+    manifest = provenance.read_manifest(d / RECON_MANIFEST)
+    dependencies = reconstruction_dependencies(cfg, cache, tag)
+    if manifest is None or not provenance.cache_valid(
+        d, manifest, {**dependencies, "model": manifest.get("dependencies", {}).get("model")}, RECON_FILES
+    ):
+        raise ValueError(f"重建缓存缺失、过期或损坏：{d}；请先重跑 scripts/05_detect.py")
+    mode = "r" if mmap else None
+    return tuple(np.load(d / name, mmap_mode=mode) for name in RECON_FILES)
+
+
 def reconstruct_dataset(
     model,
     cfg: dict,
@@ -120,7 +162,9 @@ def reconstruct_dataset(
     d = reconstruction_dir(cfg, tag) / dataset_name
     f_meas, f_rec, f_ids = d / "v_meas.npy", d / "v_rec.npy", d / "ids.npy"
 
-    if not force and f_meas.exists() and f_rec.exists() and f_ids.exists():
+    dependencies = {**reconstruction_dependencies(cfg, cache, tag), "model": model_fingerprint(model)}
+    manifest = provenance.read_manifest(d / RECON_MANIFEST)
+    if not force and provenance.cache_valid(d, manifest, dependencies, RECON_FILES):
         mode = "r" if mmap else None
         print(f"[recon] 命中缓存 {d}")
         return (
@@ -133,9 +177,13 @@ def reconstruct_dataset(
         model, cfg, cache, batch_size=batch_size, device=device
     )
     d.mkdir(parents=True, exist_ok=True)
+    # 写入前撤销完整性标记；中途退出时不会留下可命中的半份缓存。
+    (d / RECON_MANIFEST).unlink(missing_ok=True)
+    (d / "metrics.json").unlink(missing_ok=True)
     np.save(f_meas, v_meas)
     np.save(f_rec, v_rec)
     np.save(f_ids, ids)
+    provenance.seal_cache(d, RECON_MANIFEST, dependencies, RECON_FILES)
     print(f"[recon] 已缓存 {d}（{v_meas.shape}）")
 
     del v_meas, v_rec
