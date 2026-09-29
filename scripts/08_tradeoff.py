@@ -28,10 +28,12 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from batfd import config, console  # noqa: E402
+from batfd import experiments, config, console  # noqa: E402
 from batfd.data import cache  # noqa: E402
 from batfd.detect import lof as lof_mod  # noqa: E402
 from batfd.eval import metrics as metrics_mod  # noqa: E402
+
+from batfd.features import cache as feature_cache  # noqa: E402
 
 console.setup()
 
@@ -157,6 +159,7 @@ def main() -> int:
 
     cfg = config.load()
     tag = args.tag or args.model
+    experiment = experiments.Experiment.create(cfg, args.model, tag)
     k = int(cfg["detect"]["lof_n_neighbors"])
 
     print("=" * 78)
@@ -167,8 +170,8 @@ def main() -> int:
     labels = read_labels(cfg)
     c_tr = cache.load_cache(cfg, "StandTrainData")
     c_te = cache.load_cache(cfg, "StandTestData1")
-    feat_tr = np.asarray(np.load(f"outputs/runs/{tag}/recon/StandTrainData/feat.npy", mmap_mode="r"))
-    feat_te = np.asarray(np.load(f"outputs/runs/{tag}/recon/StandTestData1/feat.npy", mmap_mode="r"))
+    feat_tr = np.asarray(feature_cache.load_metrics(cfg, c_tr, tag, "StandTrainData")[0])
+    feat_te = np.asarray(feature_cache.load_metrics(cfg, c_te, tag, "StandTestData1")[0])
     ids_te = np.asarray(c_te["ids"])
     print(f"训练特征 {feat_tr.shape}  测试特征 {feat_te.shape}")
     print(f"有起点标签的包：{sorted(labels)}")
@@ -212,12 +215,7 @@ def main() -> int:
                 )
         print()
 
-    out = Path(cfg["paths"]["outputs_dir"]) / "tables" / f"tradeoff_{tag}.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
+    out = experiment.write_table("tradeoff", rows, vars(args))
     print("=" * 78)
     print(f"权衡表：{out}（{len(rows)} 行）")
     print("=" * 78)

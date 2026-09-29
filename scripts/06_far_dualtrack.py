@@ -23,11 +23,13 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from batfd import config, console, progress, robust  # noqa: E402
+from batfd import experiments, config, console, progress, robust  # noqa: E402
 from batfd.data import cache, conditions as cond_mod  # noqa: E402
 from batfd.detect import lof as lof_mod  # noqa: E402
 from batfd.detect import threshold as thr_mod  # noqa: E402
 from batfd.eval import dualtrack, metrics as metrics_mod  # noqa: E402
+
+from batfd.features import cache as feature_cache  # noqa: E402
 
 console.setup()
 
@@ -133,6 +135,7 @@ def main() -> int:
 
     cfg = config.load()
     tag = args.tag or args.model
+    experiment = experiments.Experiment.create(cfg, args.model, tag)
     q = float(cfg["detect"]["threshold_q"])
     persistence = int(cfg["detect"]["persistence_windows"])
     bf = float(cfg["detect"]["pack_baseline_frac"])
@@ -147,7 +150,7 @@ def main() -> int:
 
     caches = {n: cache.load_cache(cfg, n) for n in DATASETS}
     feats = {
-        n: np.asarray(np.load(f"outputs/runs/{tag}/recon/{n}/feat.npy", mmap_mode="r"))
+        n: np.asarray(feature_cache.load_metrics(cfg, caches[n], tag, n)[0])
         for n in DATASETS
     }
     labels = read_labels(cfg)
@@ -269,12 +272,7 @@ def main() -> int:
             })
         print()
 
-    out = Path(cfg["paths"]["outputs_dir"]) / "tables" / "far_dualtrack.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
+    out = experiment.write_table("far_dualtrack", rows, vars(args))
 
     print("=" * 78)
     print(f"双轨表：{out}（{len(rows)} 行）")

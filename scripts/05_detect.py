@@ -28,7 +28,7 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from batfd import config, console, progress, robust  # noqa: E402
+from batfd import experiments, config, console, progress, robust  # noqa: E402
 from batfd.data import cache, channels, conditions as cond_mod  # noqa: E402
 from batfd.detect import lof as lof_mod  # noqa: E402
 from batfd.detect import threshold as thr_mod  # noqa: E402
@@ -177,6 +177,7 @@ def main() -> int:
 
     cfg = config.load()
     tag = args.tag or args.model
+    experiment = experiments.Experiment.create(cfg, args.model, tag)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     print("=" * 78)
@@ -336,14 +337,7 @@ def main() -> int:
                     }
                 )
 
-    # 文件名带上方法列表：用 --methods 只跑子集时不会覆盖此前的完整结果
-    mtag = "-".join(args.methods)
-    out = Path(cfg["paths"]["outputs_dir"]) / "tables" / f"detection_{tag}_{args.lof_mode}_{mtag}.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(all_rows[0].keys()))
-        w.writeheader()
-        w.writerows(all_rows)
+    out = experiment.write_table("detection", all_rows, {**vars(args), "device": str(device)})
 
     print()
     print("=" * 78)

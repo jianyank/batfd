@@ -14,7 +14,6 @@ eval/metrics.py 的口径声明），只能用「距本包首条记录的天数�
 from __future__ import annotations
 
 import argparse
-import csv
 import sys
 from pathlib import Path
 
@@ -22,10 +21,12 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from batfd import config, console, robust  # noqa: E402
+from batfd import experiments, config, console, robust  # noqa: E402
 from batfd.data import cache, conditions as cond_mod  # noqa: E402
 from batfd.detect import lof as lof_mod  # noqa: E402
 from batfd.eval import metrics as metrics_mod  # noqa: E402
+
+from batfd.features import cache as feature_cache  # noqa: E402
 
 console.setup()
 
@@ -57,6 +58,7 @@ def main() -> int:
 
     cfg = config.load()
     tag = args.tag or args.model
+    experiment = experiments.Experiment.create(cfg, args.model, tag)
     q = float(cfg["detect"]["threshold_q"])
     persistence = int(cfg["detect"]["persistence_windows"])
     bf = float(cfg["detect"]["pack_baseline_frac"])
@@ -68,7 +70,7 @@ def main() -> int:
     print("      因此只复现机制、不声称复现论文的绝对第 94 天。\n")
 
     feats = {
-        n: np.asarray(np.load(f"outputs/runs/{tag}/recon/{n}/feat.npy", mmap_mode="r"))
+        n: np.asarray(feature_cache.load_metrics(cfg, cache.load_cache(cfg, n), tag, n)[0])
         for n in ("StandTrainData", DATASET)
     }
     c = cache.load_cache(cfg, DATASET)
@@ -161,44 +163,31 @@ def main() -> int:
               f"mean_abs_i {cond[order[i], 0]:>7.2f}  p95 {cond[order[i], 2]:>7.2f}  "
               f"disch_frac {cond[order[i], 3]:>5.2f}")
 
-    tables = Path(cfg["paths"]["outputs_dir"]) / "tables"
-    tables.mkdir(parents=True, exist_ok=True)
-    out = tables / "pack5_case.csv"
-    with out.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
+    out = experiment.write_table("pack5_case", rows, vars(args))
     print(f"\n案例表：{out}（{len(rows)} 行）")
 
     # 完整逐窗口序列（供画时间线用）：上面那张表只有分数**前 N 名**、不含最早越限的
     # 那个窗口（分数低），画不出报警时刻；这里存全序列，避免绘图脚本重写一遍 LOF 计算。
     # ⚠ `flagged_*` 是**单窗越限**，`confirmed_*` 才是加了持久性规则后的**确认报警**。
     # 报告里写的"第 X 天报警"是后者，画图必须用后者，否则图上的线比表里的数字早。
-    series = tables / "pack5_series.csv"
-    cols = ("window_in_pack", "day_from_first_record", "lof_score",
-            "exceedance_fixed", "exceedance_pack_baseline",
-            "mean_abs_i", "p95_abs_i", "disch_frac", "mean_v",
-            "flagged_fixed", "flagged_pack_baseline",
-            "confirmed_fixed", "confirmed_pack_baseline")
-    with series.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(cols))
-        w.writeheader()
-        for i in range(len(days)):
-            w.writerow({
-                "window_in_pack": int(i),
-                "day_from_first_record": float(days[i]),
-                "lof_score": float(s[i]),
-                "exceedance_fixed": float(stat[i]),
-                "exceedance_pack_baseline": float(st2[i]),
-                "mean_abs_i": float(cond[order[i], 0]),
-                "p95_abs_i": float(cond[order[i], 2]),
-                "disch_frac": float(cond[order[i], 3]),
-                "mean_v": float(cond[order[i], 4]),
-                "flagged_fixed": bool(stat[i] > 0),
-                "flagged_pack_baseline": bool(st2[i] > 0),
-                "confirmed_fixed": bool(conf[i]),
-                "confirmed_pack_baseline": bool(conf2[i]),
-            })
+    series_rows = []
+    for i in range(len(days)):
+        series_rows.append({
+            "window_in_pack": int(i),
+            "day_from_first_record": float(days[i]),
+            "lof_score": float(s[i]),
+            "exceedance_fixed": float(stat[i]),
+            "exceedance_pack_baseline": float(st2[i]),
+            "mean_abs_i": float(cond[order[i], 0]),
+            "p95_abs_i": float(cond[order[i], 2]),
+            "disch_frac": float(cond[order[i], 3]),
+            "mean_v": float(cond[order[i], 4]),
+            "flagged_fixed": bool(stat[i] > 0),
+            "flagged_pack_baseline": bool(st2[i] > 0),
+            "confirmed_fixed": bool(conf[i]),
+            "confirmed_pack_baseline": bool(conf2[i]),
+        })
+    series = experiment.write_table("pack5_series", series_rows, vars(args))
     print(f"完整序列：{series}（{len(days)} 行）")
     if ai is not None:
         print(f"  （确认报警首发下标：固定阈值 {ai}；逐包基线 "

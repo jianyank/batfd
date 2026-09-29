@@ -28,10 +28,12 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from batfd import config, console, robust  # noqa: E402
+from batfd import experiments, config, console, robust  # noqa: E402
 from batfd.data import cache  # noqa: E402
 from batfd.eval import metrics as metrics_mod  # noqa: E402
 from batfd.features import fault_metric  # noqa: E402
+
+from batfd.models import inference  # noqa: E402
 
 console.setup()
 
@@ -86,11 +88,12 @@ def main() -> int:
     ap.add_argument("--model", choices=["lfaae", "ours"], default="lfaae")
     ap.add_argument("--tag", default=None)
     ap.add_argument("--late-frac", type=float, default=0.20,
-                    help="末段聚合的比例（默认末 20%）")
+                    help="末段聚合的比例（默认末 20%%）")
     args = ap.parse_args()
 
     cfg = config.load()
     tag = args.tag or args.model
+    experiment = experiments.Experiment.create(cfg, args.model, tag)
     ft = load_fault_table()
     labels = read_labels(cfg)
 
@@ -101,8 +104,8 @@ def main() -> int:
     print("判据：故障期聚合后，真值单体是否排进逐单体异常分的前 k 名\n")
 
     # 1. 只在训练集（正常期）上拟合指标统计量
-    tr_meas = np.asarray(np.load(f"outputs/runs/{tag}/recon/StandTrainData/v_meas.npy", mmap_mode="r"))
-    tr_rec = np.asarray(np.load(f"outputs/runs/{tag}/recon/StandTrainData/v_rec.npy", mmap_mode="r"))
+    train_cache = cache.load_cache(cfg, "StandTrainData")
+    tr_meas, tr_rec, _ = inference.load_reconstruction(cfg, train_cache, tag, "StandTrainData")
     # 训练集窗口量大，(N,8,256) 逐块算指标以控内存
     step = 4000
     parts = []
@@ -133,13 +136,8 @@ def main() -> int:
     per_pack: dict[int, list] = {}
 
     for ds in DATASETS:
-        d = Path(f"outputs/runs/{tag}/recon/{ds}")
-        if not d.exists():
-            print(f"[skip] {ds} 无重建缓存")
-            continue
-        vm = np.asarray(np.load(d / "v_meas.npy", mmap_mode="r"))
-        vr = np.asarray(np.load(d / "v_rec.npy", mmap_mode="r"))
         c = cache.load_cache(cfg, ds)
+        vm, vr, _ = inference.load_reconstruction(cfg, c, tag, ds)
         ids = np.asarray(c["ids"])
 
         score_parts = []
@@ -218,12 +216,7 @@ def main() -> int:
         print("\n没有可评估的包 —— 检查重建缓存与 fault_table。")
         return 1
 
-    out = Path(cfg["paths"]["outputs_dir"]) / "tables" / f"localization_{tag}.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
+    out = experiment.write_table("localization", rows, vars(args))
 
     print()
     print("=" * 78)
