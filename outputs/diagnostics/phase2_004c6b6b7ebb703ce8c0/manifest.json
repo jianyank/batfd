@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "004c6b6b7ebb703ce8c0",
+  "identity": {
+    "schema_version": 1,
+    "parameters": {
+      "q": 0.99,
+      "persistence_windows": 5,
+      "score_method": "peer_spread",
+      "threshold_methods": [
+        "fixed",
+        "quantile_regression",
+        "binned_quantile"
+      ],
+      "binned_bins": 10,
+      "condition_names": [
+        "mean_abs_i",
+        "std_i",
+        "p95_abs_i",
+        "disch_frac",
+        "mean_v",
+        "std_v",
+        "range_v",
+        "mean_t",
+        "std_t"
+      ],
+      "excluded_conditions": [
+        "mean_soc"
+      ],
+      "fit_dataset": "StandTrainData",
+      "eval_dataset": "StandTestData1",
+      "fit_rows": 26508,
+      "fit_rows_total": 26508,
+      "protocol_note": "条件阈值只在 StandTrainData 拟合；测试起点标签仅用于最终评价；stat=score-q_hat(condition)，阈值为 0；mean_soc 排除。"
+    },
+    "inputs": {
+      "configs/base.yaml": "0185b851e3d8008f1af6438fa7022f0823ca6d7bbd7aa6966c1fe0659344808a",
+      "outputs/cache/StandTestData1/cond.npy": "7b57c5a3ea55fb13eeed95270df4286b78419aa1b448fad8d711f180076e865c",
+      "outputs/cache/StandTestData1/hidden.npy": "2e5a036b4a98d9799cb9b9e395e338966b2ec93d67ece27c96c790a70a698d83",
+      "outputs/cache/StandTestData1/ids.npy": "5fa3a1f35d7c9259ca409bbf474854c3b2fe6fcbc616cbe8608890143f90237d",
+      "outputs/cache/StandTestData1/meta.json": "22039c4d4f49c4c38dccf240c90f1107ecf58ddd2f7c36a61c22deefa24186a4",
+      "outputs/cache/StandTestData1/signal.npy": "a20359bc70e02f1580a2a1dc62d2b827b47bf58aaa1e2cb7b556c881645e6c4b",
+      "outputs/cache/StandTestData1/time.npy": "f2378b278722816ef972177a2470da7bc568b36421120e7ef41eadea00812914",
+      "outputs/cache/StandTrainData/cond.npy": "aec0e683f6b08ad6d8ecd915ba5939bd500e20adf242da0a0760291b695d4e54",
+      "outputs/cache/StandTrainData/hidden.npy": "68b494b25cf68cbd41a684914c6c64e69bf67b2991a6c3133d816008492a77bf",
+      "outputs/cache/StandTrainData/ids.npy": "62d29fee543f8f5b6143c4d454f7bacb3d34cf3515040543bf21a1ac5f44dee4",
+      "outputs/cache/StandTrainData/meta.json": "5a15086661d71a63161698631913a8cfa6305d11167cde69d12c275c6326f2fd",
+      "outputs/cache/StandTrainData/signal.npy": "c3300682c7d2a03e0837b0ec77be80e8e8d1c1cf4790ed43a31fb5ac90f962d1",
+      "outputs/tables/labels.csv": "66d5eed973c602b76a62eeb125544fff920ad69c5ce427721c0ebc0d0e988d5e"
+    },
+    "implementation": {
+      "simple": "c78e52d756248a04826a7ff15a4e3806239c6f3261e88be30098fcc01c9ecc4e",
+      "threshold": "bb84f169a0aeefe0f5616166a20eb3f2bd07ae4acc381c2b542123479b9d665c",
+      "conditions": "fd69b7e26f333a2731b10591e72ec0ec5bd2a0357d0b93102de1c97a446f6015",
+      "metrics": "328b11a0d8d5c0a36a40bd14ef573bdaa2acfb5cdcc7774fd49501feaa60a241",
+      "script": "3d4ed581b177d8d982de88a33ccfe882512fcbd336d573b9d4cedeea4024c8f8"
+    },
+    "git_commit": "8d16684d6b8bcace04a2f4efed3d31f16b023f4f"
+  },
+  "files": {
+    "comparison.csv": "30026d5b09de14e8cb1c45b2f6babc06d891aeeeba274141fa450602b46d0e0a",
+    "condition_coverage.csv": "58f7e6de6e6f0a11897c0741b3663b3fdadc7932ae36517ac327481a4b3f4f52",
+    "summary.json": "3eabf7326614846c933dfd36392c39464d9e571b09c7e863ed8de0a228767320"
+  }
+}
