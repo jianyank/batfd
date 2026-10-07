@@ -1,0 +1,16 @@
+{
+  "purpose": "historical_research_aggregate_results_only",
+  "source_run": "screen_v2",
+  "source_manifest_sha256": "a41018cd9127c383254281fc3d3f8850ef3c46801baf1e721b18838e42d008a9",
+  "sequence_source_run": "sequence_diagnostic_v1",
+  "sequence_manifest_sha256": "48065d462d30bb1fd56e075400bcf23961dcdbbf29f394653fe2d38d817c7a5e",
+  "mentor_report_sha256": "a232ed2f8f7ffac27517ed1ffe3a34fecb3027e72f68937138c2a5d7840eaba1",
+  "real_fault_performance_verified": false,
+  "deployment_approved": false,
+  "aggregate_files": {
+    "method_summary.csv": "11b813a1c137ac22e3994b5b676a75df8dfb05e050b018771c523320ecbdfb24",
+    "raw_folds.csv": "2b02dcad1e833a6f01e8b33f85136ec61d3e9c816c9620a8082316821973273c",
+    "stress_summary.csv": "9029f301fb5eb281c8825fd26029cbd2ca4ab3b9b91040ade958d53dfae5c942",
+    "continuous_behavior.csv": "4abebe8e0c6b99ce77ce4a17230c563354c17cbf5b149852abd6b00af49d899a"
+  }
+}
