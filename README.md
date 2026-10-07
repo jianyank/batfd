@@ -17,14 +17,13 @@ research_system_20261007/
   inject.py / evaluation.py / system.py     合成压力测试及检测系统
   run_benchmark.py                          四折按包留出实验与封存复验
   deploy.py / predict.py / smoke_demo.py    模型冻结、预测与接口演示
-  diagnose_sequences.py / audit_real_inputs.py  连续序列与输入审计
+  diagnose_sequences.py                    连续序列诊断
   configs/screen.json / tests/              固定协议与回归测试
   MENTOR_REPORT.tex / MENTOR_REPORT.md       最新导师报告
   BEST_SCHEME.md / USAGE.md / REAL_ACCEPTANCE.md
   assets/                                  报告三幅图
   results/                                 历史研究的汇总表（不是逐窗数据）
 requirements.txt                           核心依赖
-requirements-doc.txt                       可选文档工具依赖
 ```
 
 ## 快速开始
@@ -38,7 +37,9 @@ python -X utf8 -B -m unittest discover -s tests -v
 python run_benchmark.py --help
 ```
 
-回归测试只生成临时合成数据，不需要私有 MAT 文件或真实数据缓存。正式实验必须提供已有缓存，详见 `research_system_20261007/USAGE.md`。此版本以 NumPy 缓存为输入，不提供旧 MAT 预处理链。
+当前精简版本已通过 **86项回归测试（2026-10-07，0失败）**；测试数较上一版本减少8项，对应已移出的历史审计模块，检测流程的回归测试保留。
+
+回归测试只生成临时合成数据，不需要私有 MAT 文件或真实数据缓存。正式实验必须提供已有缓存，详见 `research_system_20261007/USAGE.md`。此版本以 NumPy 缓存为输入，不提供旧 MAT 预处理链。旧输入审计、报告转换工具、重复导航及过程日志已移出仓库；导师报告与研究汇总仍保留。
 
 ## 已有研究结果（不是本次重新训练）
 

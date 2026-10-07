@@ -57,19 +57,9 @@ python smoke_demo.py --cache-dir /path/to/StandTrainData --bundle-dir runs/candi
 
 仅加载自己生成或已核实来源与哈希的joblib模型；序列化模型不能按不可信数据对待。
 
-## 5. 历史结果、复验与审计
+## 5. 历史结果与复验
 
 - 仓库内 `results/` 只发布汇总表，不能代替模型、逐窗输出、源快照和输入文件完成完整复验。
 - 旧实验封存记录包含绝对路径与输入哈希。迁移后不会自动重定位；恢复原始输入布局才能执行默认完整复验，不能修改manifest或关闭哈希检查让其通过。
 - 旧v2模型绑定整理前的源码；路径参数修改也会使活动源码哈希变化。恢复完整旧环境或用当前源码重跑并生成新bundle，不绕过拒绝逻辑。
-- `diagnose_sequences.py`需要完整封存run。`audit_real_inputs.py`是保留的历史只读审计入口，完整扫描还需四份MAT、缓存、时间侧车与相关旧审计资产；缺这些资产时不承诺成功。其独立辅助函数仍由合成单元测试覆盖。
-
-## 6. 报告转换（可选）
-
-```bash
-python -m pip install -r requirements-doc.txt
-python research_system_20261007/tools/report_to_markdown.py
-python research_system_20261007/tools/report_to_word.py
-```
-
-本节从仓库根目录执行。第一步转换导师TeX并重绘三图，需Windows微软雅黑/宋体中文字体；第二步从Markdown生成含可编辑公式的Word。工具是本报告专用转换器，不是通用LaTeX解析器。生成的Word、诊断JSON和TeX编译中间文件不入库。原 `MENTOR_REPORT.tex` 保留原路径与内容，无需为了运行检测器编译它。
+- `diagnose_sequences.py`需要完整封存run。历史输入审计和本报告专用转换器已移出源码仓库，导师报告与三幅图仍保留。
