@@ -72,8 +72,10 @@ def build(baseline, scores, confirmed, labels, evidence, machine, threshold, arg
                         vmin=0, vmax=highlight, interpolation="nearest")
     ax_heat.set_ylabel("通道")
     ax_heat.set_yticks(np.linspace(0, evidence.shape[1] - 1, 8, dtype=int))
-    ax_heat.set_title(f"逐通道标准化偏离　｜　{machine}　｜　分块流式推理回放",
-                      loc="left", fontweight="bold", fontsize=10)
+    ax_heat.set_title(
+        f"逐通道标准化偏离　｜　{machine}　｜　{args.method.upper()}　｜　"
+        f"窗口长度 T={args.window_size}　｜　分块流式推理回放",
+        loc="left", fontweight="bold", fontsize=10)
     fig.colorbar(im, ax=ax_heat, pad=0.008, fraction=0.022, label="偏离")
 
     x = np.arange(n)
@@ -151,6 +153,8 @@ def main():
                         default=Path(__file__).resolve().parents[2] / "datasets/smd")
     parser.add_argument("--machine", default="machine-1-1")
     parser.add_argument("--method", default="lof", choices=("robust", "lof", "iforest", "pca"))
+    parser.add_argument("--window-size", type=int, default=1,
+                        help="T; 1 is the point baseline, larger values build time-series features")
     parser.add_argument("--start", type=int, default=19000, help="first test point to replay")
     parser.add_argument("--stop", type=int, default=21300, help="one past the last test point")
     parser.add_argument("--step", type=int, default=5, help="test points advanced per frame")
@@ -180,15 +184,19 @@ def main():
 
     train, test, labels = load_smd(args.smd_dir, args.machine)
     fit, cal, _ = split_train(train)
-    print(f"拟合 {len(fit)} 行　校准 {len(cal)} 行　测试 {len(test)} 行")
+    T = args.window_size
+    print(f"拟合 {len(fit)} 行　校准 {len(cal)} 行　测试 {len(test)} 行　窗口长度 T={T}")
 
     model = AnomalyDetector(args.method, feature_mode="independent",
                             quantile=.99, persistence=5, random_state=42)
-    model.fit(np.asarray(fit)[:, None, :]).calibrate(np.asarray(cal)[:, None, :])
+    model.fit(make_windows(np.asarray(fit), T, 1)[0]).calibrate(make_windows(np.asarray(cal), T, 1)[0])
 
-    windows, _ = make_windows(np.asarray(test), 1, 1)
+    windows, ends = make_windows(np.asarray(test), T, 1)
     scores, confirmed, evidence = predict_in_chunks(model, windows)
+    # Window ends align each output back to a raw test point, so labels can follow.
+    labels = labels[ends]
     print(f"阈值 {model.threshold_:.6g}　确认报警 {int(confirmed.sum())} / {len(confirmed)}")
+    print(f"预热区 {T - 1} 点无输出；评价覆盖原始点 {ends[0]}–{ends[-1]}")
 
     lo, hi = args.start, min(args.stop, len(scores))
     block_scores, block_confirmed = scores[lo:hi], confirmed[lo:hi]

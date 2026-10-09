@@ -5,20 +5,25 @@
 
 ## 代码包位置
 
-已构建好的交付包在仓库的 `dist/` 目录：
+**参赛用的代码包就在本目录**，可直接上传网盘：
 
 | 文件 | 大小 | 说明 |
 |---|---:|---|
-| `chronoguard_ts-0.1.0-py3-none-any.whl` | 10.9 KB | 可安装的库 |
-| `chronoguard_ts-0.1.0-source.zip` | 49 KB | 源码包（19 个条目） |
-| `CHECKSUMS.sha256` | — | 两个包的 SHA256 |
-| `DELIVERY.json` | — | 构建记录 |
+| `chronoguard_ts-0.1.0-py3-none-any.whl` | 10,896 B | 可安装的库 |
+| `chronoguard_ts-0.1.0-source.zip` | 48,966 B | 源码包（19 个条目） |
+| `CHECKSUMS.sha256` | 204 B | 两个包的 SHA256 |
+| `DELIVERY.json` | 728 B | 构建记录（来源目录、大小、哈希） |
 
-重建命令（仓库根目录执行）：
+已核对：两个包的 SHA256 与 `CHECKSUMS.sha256`、`DELIVERY.json` **三方一致**。
 
-```bash
-python tools/build_delivery.py
-```
+> 仓库根的 `dist/` 是同一个构建脚本的输出目录，本目录是**参赛投放副本**。
+> 重新构建（仓库根执行）后，需再把新包复制过来：
+>
+> ```bash
+> python tools/build_delivery.py
+> cp dist/chronoguard_ts-0.1.0-*.{whl,zip} dist/CHECKSUMS.sha256 dist/DELIVERY.json \
+>    deliverables/05-代码包/
+> ```
 
 ## 源码包内容
 

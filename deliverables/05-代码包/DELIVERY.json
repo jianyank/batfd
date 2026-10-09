@@ -1,0 +1,30 @@
+{
+  "project": "chronoguard-ts",
+  "version": "0.1.0",
+  "date": "2026-10-09",
+  "status": "built",
+  "built_from": "framework",
+  "files": [
+    {
+      "file": "chronoguard_ts-0.1.0-py3-none-any.whl",
+      "bytes": 10896,
+      "sha256": "a43656a2e693756c56bbdaf8650b4c8ab8962a78a1d9e699ffaf57bc9ef0deff"
+    },
+    {
+      "file": "chronoguard_ts-0.1.0-source.zip",
+      "bytes": 48966,
+      "sha256": "42fe7108b376c4adde0cb682bca0efbe8441ebfa8b9e1c9703b905de0bf56587"
+    }
+  ],
+  "source_archive_files": 18,
+  "exclusions": [
+    "private_data",
+    "external_datasets",
+    "models",
+    "per_sample_predictions",
+    "git",
+    "caches",
+    "logs"
+  ],
+  "stale_from_previous_build": []
+}
