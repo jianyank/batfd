@@ -72,6 +72,22 @@ SMD T=16   12 组 × 9 指标 = 108 项    差异 0
 
 **交付包 + 真实数据能逐位复现报告中的全部数字。**
 
+## 运行测试代码：一个必须知道的前提
+
+`chronoguard_ts-0.1.0/tests/` 下的测试需要 `chronoguard` **可被导入**。实测三种情形：
+
+| 情形 | 命令 | 结果 |
+|---|---|:--:|
+| 已安装包（推荐） | `pip install -e . --no-deps` 后 `python -m unittest discover -s tests` | ✅ 34 项通过 |
+| 未安装，但指定源码路径 | `PYTHONPATH=src python -m unittest discover -s tests` | ✅ 34 项通过 |
+| **两者都没有** | 直接 `python -m unittest discover -s tests` | ❌ 2 个导入错误 |
+
+**所以：解压后直接跑测试会失败，必须先安装，或把 `src/` 加到 `PYTHONPATH`。**
+这是 Python 包的常规要求，不是缺陷——但评审若跳过安装直接双击运行会看到失败，
+建议在交付说明里写明。
+
+`run_all.sh` 的第 1 步就是安装，所以整体流程不受影响。
+
 ## 两点说明
 
 1. **`datasets/` 是目录联接，不是副本。** 它指向仓库的 `datasets/`，
