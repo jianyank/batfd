@@ -30,6 +30,7 @@ SOURCE_FILES = [
     "examples/demo.py",
     "examples/benchmark.py",
     "examples/benchmark_smd_windows.py",
+    "examples/live_demo.py",
     "tests/test_core.py",
     "tests/test_data_evaluation.py",
 ]
