@@ -4,15 +4,18 @@
 /datasets/
 /results/
 
-# 参赛材料与过程记录不对外发布。
+# 参赛材料、过程记录与内部规范不对外发布。
 # 文件保留在本地磁盘，只是不受版本控制 —— deliverables/ 内含技术方案、
 # 演示视频、答辩 PPT、佐证材料、代码包与可运行包；docs/project-memory 与
 # docs/superpowers 是会话日志与开发计划；tools/build_delivery.py 的输出
-# 落在 deliverables/05-代码包，公开仓库中该路径不存在。
+# 落在 deliverables/05-代码包，公开仓库中该路径不存在；AGENTS.md 是内部
+# 操作规范并引用上述已排除文件；规则解读.md 是赛事内部解读，非本库内容。
 /deliverables/
 /docs/project-memory/
 /docs/superpowers/
 /tools/build_delivery.py
+/AGENTS.md
+/2026AIC算法创新赛规则解读.md
 /research_system_20261007/runs/
 /research_system_20261007/logs/
 /research_system_20261007/assets/word_qa/
