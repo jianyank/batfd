@@ -150,7 +150,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--smd-dir", type=Path,
-                        default=Path(__file__).resolve().parents[2] / "datasets/smd")
+                        default=Path(__file__).resolve().parents[1] / "datasets/smd")
     parser.add_argument("--machine", default="machine-1-1")
     parser.add_argument("--method", default="lof", choices=("robust", "lof", "iforest", "pca"))
     parser.add_argument("--window-size", type=int, default=1,

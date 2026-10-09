@@ -19,16 +19,14 @@ from chronoguard.data import download_smd, load_smd, split_train, file_sha256
 from chronoguard.detector import METHODS
 from chronoguard.evaluation import detection_metrics, normal_metrics
 
-FRAMEWORK = Path(__file__).resolve().parents[1]
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _repo_root():
-    '''Repository root inside the source tree; otherwise the current directory.
-
-    Keeps the script runnable from an extracted copy with no repo around it.
+    '''Anchor for the datasets/ directory: the package root when running from the
+    source tree, otherwise the current directory so an extracted copy still runs.
     '''
-    candidate = FRAMEWORK.parent
-    return candidate if (candidate / 'datasets').is_dir() else Path.cwd()
+    return PACKAGE_ROOT if (PACKAGE_ROOT / 'datasets').is_dir() else Path.cwd()
 
 
 ROOT = _repo_root()

@@ -1,28 +1,24 @@
-# Private inputs and local execution evidence (never published)
-# datasets/ holds data that is not redistributed; results/ holds run artifacts.
-# Dataset specifications live in docs/DATASETS.md, which is tracked.
+# 私有输入与本地运行证据（不对外发布）
+# datasets/ 存放不分发的数据，results/ 存放运行产物。
 /datasets/
 /results/
 
-# 参赛材料、过程记录与内部规范不对外发布。
-# 文件保留在本地磁盘，只是不受版本控制 —— deliverables/ 内含技术方案、
-# 演示视频、答辩 PPT、佐证材料、代码包与可运行包；docs/project-memory 与
-# docs/superpowers 是会话日志与开发计划；tools/build_delivery.py 的输出
-# 落在 deliverables/05-代码包，公开仓库中该路径不存在；AGENTS.md 是内部
-# 操作规范并引用上述已排除文件；规则解读.md 是赛事内部解读，非本库内容。
+# 以下内容不随本库发布。文件保留在本地磁盘，只是不受版本控制：
+# 参赛材料（deliverables/）、原研究体系（research_system_20261007/）、
+# 实验报告与溯源（benchmarks/）、过程记录（docs/project-memory、docs/superpowers）、
+# 内部操作规范（AGENTS.md）、赛事解读。
 /deliverables/
+/research_system_20261007/
+/benchmarks/
+/docs/COMPETITION_BRIEF.md
+/docs/DATASETS.md
 /docs/project-memory/
 /docs/superpowers/
-/tools/build_delivery.py
+/tools/
 /AGENTS.md
 /2026AIC算法创新赛规则解读.md
-/research_system_20261007/runs/
-/research_system_20261007/logs/
-/research_system_20261007/assets/word_qa/
-/research_system_20261007/assets/*audit.json
-/research_system_20261007/assets/docx_conversion_diagnostics.json
 
-# Models, raw arrays and archives
+# 模型、原始数组与归档
 *.mat
 *.npy
 *.npz
@@ -37,7 +33,7 @@
 *.tar
 *.gz
 
-# Python environments and build caches
+# Python 环境与构建缓存
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -47,7 +43,7 @@ venv/
 build/
 dist/
 
-# TeX / Word generated artifacts
+# 生成的文档产物
 *.aux
 *.log
 *.out
@@ -56,11 +52,9 @@ dist/
 *.synctex.gz
 *.fls
 *.fdb_latexmk
-/research_system_20261007/*.pdf
-/research_system_20261007/*.docx
 ~$*
 
-# Credentials and editor-local state
+# 凭据与编辑器本地状态
 .env
 .env.*
 !.env.example

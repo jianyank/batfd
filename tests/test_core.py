@@ -14,20 +14,6 @@ class FeatureTests(unittest.TestCase):
                 self.assertEqual(f.shape, (6, c, 5))
                 self.assertTrue(np.isfinite(f).all())
 
-    def test_peer_matches_existing_battery_features(self):
-        import importlib.util
-        file = Path(__file__).resolve().parents[2] / 'research_system_20261007/features.py'
-        if not file.is_file():
-            # The legacy implementation ships only alongside the source repository.
-            self.skipTest('legacy features.py not present; equivalence check skipped')
-        spec = importlib.util.spec_from_file_location('legacy_features', file)
-        legacy = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(legacy)
-        x = np.random.default_rng(2).normal(size=(30, 16, 20))
-        expected = legacy.extract(x)['peer']
-        actual = WindowFeatures('peer').transform(battery_windows(x)).reshape(30, -1)
-        np.testing.assert_allclose(actual, expected, rtol=1e-12, atol=1e-12)
-
     def test_battery_mapping_is_explicit_and_unique(self):
         x = np.arange(48).reshape(2, 4, 6)
         np.testing.assert_array_equal(battery_windows(x, [0, 3, 5]), x[:, :, [0, 3, 5]])

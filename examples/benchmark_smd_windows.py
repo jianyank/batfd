@@ -19,7 +19,7 @@ import chronoguard
 from chronoguard.data import load_smd, make_windows, file_sha256, split_train
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from benchmark import FRAMEWORK, ROOT, fit_model, predict_chunks, select_fit, write_json
+from benchmark import PACKAGE_ROOT, ROOT, fit_model, predict_chunks, select_fit, write_json
 
 from chronoguard.detector import METHODS
 from chronoguard.evaluation import detection_metrics
@@ -80,8 +80,9 @@ def main():
     args.output_dir.mkdir(parents=True, exist_ok=False)
     source = args.output_dir / 'source'
     source.mkdir()
-    source_files = [*sorted((FRAMEWORK / 'src/chronoguard').glob('*.py')),
-                    FRAMEWORK / 'examples/benchmark.py', Path(__file__), FRAMEWORK / 'pyproject.toml']
+    source_files = [*sorted((PACKAGE_ROOT / 'src/chronoguard').glob('*.py')),
+                    PACKAGE_ROOT / 'examples/benchmark.py', Path(__file__),
+                    PACKAGE_ROOT / 'pyproject.toml']
     hashes = {}
     for file in source_files:
         rel = file.relative_to(ROOT)
