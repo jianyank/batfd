@@ -10,20 +10,21 @@
 | 文件 | 大小 | 说明 |
 |---|---:|---|
 | `chronoguard_ts-0.1.0-py3-none-any.whl` | 10,896 B | 可安装的库 |
-| `chronoguard_ts-0.1.0-source.zip` | 48,966 B | 源码包（19 个条目） |
+| `chronoguard_ts-0.1.0-source.zip` | 49,193 B | 源码包（19 个条目） |
 | `CHECKSUMS.sha256` | 204 B | 两个包的 SHA256 |
 | `DELIVERY.json` | 728 B | 构建记录（来源目录、大小、哈希） |
 
 已核对：两个包的 SHA256 与 `CHECKSUMS.sha256`、`DELIVERY.json` **三方一致**。
 
-> 仓库根的 `dist/` 是同一个构建脚本的输出目录，本目录是**参赛投放副本**。
-> 重新构建（仓库根执行）后，需再把新包复制过来：
+> **本目录就是构建输出目录**，不存在第二份副本。
+> 重新构建（仓库根执行）会直接覆盖本目录内的包：
 >
 > ```bash
 > python tools/build_delivery.py
-> cp dist/chronoguard_ts-0.1.0-*.{whl,zip} dist/CHECKSUMS.sha256 dist/DELIVERY.json \
->    deliverables/05-代码包/
 > ```
+>
+> 重建后 `CHECKSUMS.sha256`、`DELIVERY.json` 与佐证材料中引用的哈希都会变化——
+> wheel 与 zip 内嵌文件时间戳，**构建不是逐位可复现的**，请同步更新佐证材料。
 
 ## 源码包内容
 

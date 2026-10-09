@@ -16,7 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FRAMEWORK = ROOT / "framework"
-DIST = ROOT / "dist"
+# Build straight into the submission folder; there is no separate dist/ copy.
+DIST = ROOT / "deliverables" / "05-代码包"
 
 SOURCE_FILES = [
     "README.md",
@@ -116,9 +117,9 @@ def main():
     source_target = args.dist / f"chronoguard_ts-{ver}-source.zip"
     source_manifest = build_source_archive(ver, source_target)
 
-    previous = sorted(p.name for p in args.dist.iterdir()
-                      if p.name not in (wheel_target.name, source_target.name, "CHECKSUMS.sha256",
-                                        "DELIVERY.json"))
+    # Only package files count as stale; the folder also holds models/ and README.md.
+    previous = sorted(p.name for p in args.dist.glob("chronoguard_ts-*")
+                      if p.name not in (wheel_target.name, source_target.name))
     artifacts = [wheel_target, source_target]
     checksum_lines = [f"{sha256(p)}  {p.name}" for p in artifacts]
     (args.dist / "CHECKSUMS.sha256").write_text("\n".join(checksum_lines) + "\n", encoding="utf-8")

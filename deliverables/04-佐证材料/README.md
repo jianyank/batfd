@@ -13,7 +13,7 @@
 | 源码包独立安装验证 | 需重跑生成日志 | 解压后独立安装，34 项测试通过 |
 | 实验溯源 | `../benchmarks/20261008/provenance.json` | 固定协议、版本、源码与输入 SHA256 |
 | 实验验收记录 | `../benchmarks/20261008/VERIFICATION.json` | 49 个产物 + 12 个输入哈希核对 |
-| 交付构建记录 | `../dist/DELIVERY.json` | wheel 与源码包的大小与 SHA256 |
+| 交付构建记录 | `../05-代码包/DELIVERY.json` | wheel 与源码包的大小与 SHA256 |
 | 数据集来源与许可 | 见技术方案尾页 | 公开数据集 DOI 与 CC-BY-NC-4.0 声明 |
 | 版本历史 | `git log` | 可导出提交记录证明开发过程 |
 

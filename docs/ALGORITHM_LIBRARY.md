@@ -33,7 +33,7 @@ python -X utf8 -B examples/demo.py
 wheel 另行提供，不包含数据或依赖的二进制包；安装时 pip 会按 pyproject 声明解析依赖：
 
 ```bash
-python -m pip install dist/chronoguard_ts-0.1.0-py3-none-any.whl
+python -m pip install deliverables/05-代码包/chronoguard_ts-0.1.0-py3-none-any.whl
 ```
 
 本机验证时使用的解释器是 D:/Python/miniconda3/envs/batfd/python.exe；换一台机器只需任意已装依赖的 Python >=3.10 环境。
