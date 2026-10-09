@@ -75,6 +75,15 @@
 </div>
 
 <!-- ==================== 1 需求分析 ==================== -->
+<div class="fig" style="page-break-before: always;">
+  <img src="fig_roadmap.png" style="width:100%">
+</div>
+<div class="cap">
+  图 1　整体技术路线图：从问题定位与既有做法的三处断裂，到统一契约与适配层、五阶段流程、
+  工程交付，再到双场景验证与产出。图中每一环节均与正文对应；<b>五阶段骨架固定，检测内核可替换</b>，
+  这是本作品可复用主张的结构性依据。
+</div>
+
 <h2 class="pb">1　需求分析</h2>
 
 <h3>1.1　两个学科场景，同一类技术问题</h3>
@@ -197,7 +206,7 @@
   <img src="../../research_system_20261007/assets/fig_workflow.png" style="width:96%">
 </div>
 <div class="cap">
-  图 1　流程实例：本图展示的是上述五阶段流程<b>在电池场景上的一个具体实例</b>（256×20 输入 →
+  图 2　流程实例：本图展示的是上述五阶段流程<b>在电池场景上的一个具体实例</b>（256×20 输入 →
   32 维单体相对中位数残差 → 中位数 / MAD 标准化 → LOF 新样本评分 → 连续 5 窗确认），
   <b>并非通用流程图</b>。换到服务器场景时，特征模式、维度与所用方法均可替换，而五阶段骨架保持不变。
 </div>
@@ -366,7 +375,7 @@
 <div class="fig">
   <img src="../../results/figures/20261008194733-lof/battery_lof_scores.png" style="width:100%">
 </div>
-<div class="cap">图 2　电池四个留出包的 LOF 分数曲线与正常校准阈值。可见包 8 与包 10 存在大量超阈值区间。</div>
+<div class="cap">图 3　电池四个留出包的 LOF 分数曲线与正常校准阈值。可见包 8 与包 10 存在大量超阈值区间。</div>
 <div class="warn">
   <b>包 8 的 18.453% 不能表述为"误报"。</b>电池"训练数据保证无故障"这一前提<b>未获证实，且现有证据对它不利</b>：
   所依据的公开数据集官方 README 声明全部 28 个系统均因"不满意行为"退回厂家，且明确说明该数据集有偏、
@@ -410,7 +419,7 @@ machine-3-1 的 LOF 虽命中 4/4 个事件，FPR 却高达 28.219%、严格 F1 
 <div class="fig">
   <img src="../../results/figures/20261008194733-lof/smd_lof_scores_log.png" style="width:100%">
 </div>
-<div class="cap">图 3　SMD 三机的 LOF 分数曲线（T=1 逐点基线，纵轴对数，橙色虚线为正常校准 q99 阈值）。</div>
+<div class="cap">图 4　SMD 三机的 LOF 分数曲线（T=1 逐点基线，纵轴对数，橙色虚线为正常校准 q99 阈值）。</div>
 
 <h3>4.3　核心贡献：时序尺度对照实验与距离对比度机理</h3>
 <p>
@@ -430,7 +439,7 @@ machine-3-1 的 LOF 虽命中 4/4 个事件，FPR 却高达 28.219%、严格 F1 
 <div class="fig">
   <img src="../../results/figures/20261009-t16-scale/smd_macro_f1_comparison.png" style="width:99%">
 </div>
-<div class="cap">图 4　四方法 × 两尺度的宏平均严格 F1 对比，图中诊断框给出特征空间的成对距离对比度。</div>
+<div class="cap">图 5　四方法 × 两尺度的宏平均严格 F1 对比，图中诊断框给出特征空间的成对距离对比度。</div>
 <p>
 <b>机理：距离对比度的塌缩。</b>实验给出的特征空间诊断揭示了根因。在 machine-3-1 的校准集 800 点子样本上
 计算特征空间点对距离的变异系数（CV）与 p95/p5 对比度：
@@ -456,7 +465,7 @@ machine-2-1 从 0.2706 降到 0.1645，而 machine-3-1 反而从 0.0384 微升�
   <img src="../../results/figures/20261009-t16-scale/smd_lof_scale_comparison.png" style="width:100%">
 </div>
 <div class="cap">
-  图 5（核心图）　三机器 × 两尺度（T=1 左 / T=16 右）的 LOF 分数并排对比，含阈值与真实异常区间。
+  图 6（核心图）　三机器 × 两尺度（T=1 左 / T=16 右）的 LOF 分数并排对比，含阈值与真实异常区间。
   左列为逐点基线；右列为 T=16 开窗。注意 T=16 的分数曲线整体被压平、与阈值的区分度下降，
   与上文"距离对比度塌缩"的机理一致。
 </div>

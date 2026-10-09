@@ -4,7 +4,7 @@
 set -euo pipefail
 
 EDGE="/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-DIR="/d/Matlab/project/pypack/deliverables/technical-proposal"
+DIR="/d/Matlab/project/pypack/deliverables/01-技术方案"
 
 cd "$DIR"
 
