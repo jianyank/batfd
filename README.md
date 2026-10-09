@@ -2,6 +2,24 @@
 
 当前仓库以 `research_system_20261007` 研究体系为主体，保留检测源码、基线比较、测试、阶段报告及汇总结果；旧深度学习框架与历史实验产物已从当前版本移除，不重写 Git 历史。
 
+## 新增算法库入口（2026-10-08）
+
+原研究体系保留不变；新增 **ChronoGuard 0.1.0** 多通道时序异常检测库，发行名 `chronoguard-ts`，导入名 `chronoguard`。
+
+- [算法库安装、接口和安全边界](docs/ALGORITHM_LIBRARY.md)
+- [参赛作品说明](docs/COMPETITION_BRIEF.md)
+- [两场景28组实验报告与开发复验限制](benchmarks/20261008/REPORT.md)
+- [第三方材料说明](docs/THIRD_PARTY_NOTICES.md)
+
+四方法为 robust、LOF、Isolation Forest、PCA；接口可复用，不是万能模型或原创检测算法。电池只验证正常误报，SMD 仅3台逐点基线，效果有限。
+
+```bash
+python -m pip install -r requirements.txt
+python -m pip install -e . --no-deps
+python -X utf8 -B -m unittest discover -s tests -v
+python -X utf8 -B examples/demo.py
+```
+
 ## 任务与边界
 
 - **训练数据保证无故障，测试数据为接近故障的时间片段。** 使用正常数据拟合检测器和校准参考阈值，推理不需要故障标签。

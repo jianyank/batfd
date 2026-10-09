@@ -34,7 +34,7 @@ python run_benchmark.py --verify runs/screen_new
 python deploy.py build --cache-dir /path/to/StandTrainData --run-dir runs/screen_new --output-dir runs/candidate_new
 ```
 
-Windows将 `/path/to/StandTrainData` 换成缓存绝对路径（带空格时加引号）。实验固定四折按包留出、折内60%拟合/20%校准/20%开发、正常q99、连续5窗；选型只使用合成开发域。全局重拟合不是新的独立验证。
+Windows将 `/path/to/StandTrainData` 换成缓存绝对路径（带空格时加引号）。实验固定四折按包留出、折内60%拟合/20%校准/20%开发、正常q99、连续5窗；选型只使用开发数据上的人工异常注入实验结果。全局重拟合不是新的独立验证。
 
 可选历史冻结特征重放：
 
@@ -53,7 +53,7 @@ python smoke_demo.py --cache-dir /path/to/StandTrainData --bundle-dir runs/candi
 
 预测数组必须为 `N×256×20` 且输入域与训练相同，一次CLI仅处理一个包的连续片段；不得把多包拼成一个序列。CLI每次重置状态。连续分块使用 `CandidateSystem.predict` 返回的 `state` 传入下一块，换包或缺测断点重新初始化。
 
-`prediction.npz`保存分数、单体证据与排序、单窗超阈值、确认报警、报警开始/解除及就绪状态；`summary.json`记录输入/模型哈希及限制。单体排名是标准化残差证据，不是LOF因果贡献或已确认故障单体。烟雾演示是输入副本的固定注入与分段重放，不是真实故障性能验证。
+`prediction.npz`保存分数、单体证据与排序、单窗超阈值、确认报警、报警开始/解除及就绪状态；`summary.json`记录输入/模型哈希及限制。单体排名是标准化偏差证据，不是LOF因果贡献或已确认故障单体。烟雾演示是输入副本的固定注入与分段重放，不是真实故障性能验证。
 
 仅加载自己生成或已核实来源与哈希的joblib模型；序列化模型不能按不可信数据对待。
 

@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-08",
+  "status": "verified",
+  "experimental_groups": 28,
+  "experiment_artifacts_verified": 49,
+  "input_files_verified": 12,
+  "source_snapshot_matches_workspace": true,
+  "smd_metrics_recomputed_from_saved_predictions": 12,
+  "user_modified_files_preserved": 8,
+  "published_summaries_match_original_runs": true,
+  "library_tests": {
+    "run": 34,
+    "failures": 0,
+    "errors": 0,
+    "exit_code": 0
+  },
+  "legacy_tests": {
+    "run": 86,
+    "failures": 0,
+    "errors": 0,
+    "exit_code": 0
+  },
+  "versions": {
+    "python": "3.12.14",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "joblib": "1.6.0"
+  },
+  "wheel_inventory": [
+    "chronoguard/__init__.py",
+    "chronoguard/data.py",
+    "chronoguard/detector.py",
+    "chronoguard/evaluation.py",
+    "chronoguard/features.py",
+    "chronoguard_ts-0.1.0.dist-info/METADATA",
+    "chronoguard_ts-0.1.0.dist-info/WHEEL",
+    "chronoguard_ts-0.1.0.dist-info/top_level.txt",
+    "chronoguard_ts-0.1.0.dist-info/RECORD"
+  ],
+  "wheel": {
+    "file": "chronoguard_ts-0.1.0-py3-none-any.whl",
+    "sha256": "592c1f553c5d84ed5f8646c16cfd87b00a6d8318a70d920d7a79f7599f640939",
+    "bytes": 15131
+  },
+  "wheel_metadata_utf8": true,
+  "wheel_import_outside_repository": true,
+  "wheel_all_four_methods_smoke": true,
+  "wheel_streaming_and_save_load": true,
+  "independent_install_uses_existing_runtime_dependencies": true,
+  "source_and_model_runtime_independent_of_legacy_scripts": true,
+  "documents_utf8": true,
+  "documents_control_characters": 0,
+  "document_links_checked": 15,
+  "original_readme_preserved": true,
+  "source_archive": {
+    "file": "chronoguard_ts-0.1.0-source.zip",
+    "status": "verified",
+    "files_verified": 25,
+    "independent_install": true,
+    "library_tests": {
+      "run": 34,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    },
+    "synthetic_demo": true,
+    "benchmark_help": true,
+    "document_links_and_python_examples": true,
+    "uses_existing_runtime_dependencies": true,
+    "hash_receipt": "dist/DELIVERY.json and dist/CHECKSUMS.sha256"
+  },
+  "local_logs": "outputs/algolib/delivery_verification_20261008",
+  "evaluation_status": "development_replay; same test data was examined before scale-degeneracy fix",
+  "experiment_run": "outputs/algolib/checked_release_20261008",
+  "total_repository_tests": 120,
+  "engineering_regressions": {
+    "pca_threshold_ties": "passed",
+    "pca_bitwise_chunk_stress_checks": 45,
+    "smd_existing_manifest": {
+      "old_implementation_failing_subcases": 12,
+      "current_implementation_failing_subcases": 0,
+      "real_data_unchanged": true
+    }
+  },
+  "pre_review_run_comparison": {
+    "groups": 28,
+    "detection_and_event_metrics_unchanged": true,
+    "pca_thresholds_changed": 4,
+    "runtime_changes_excluded": true
+  }
+}

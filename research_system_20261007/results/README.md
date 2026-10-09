@@ -6,7 +6,7 @@
 | :---: | :---: |
 | `method_summary.csv` | 原始候选及历史冻结特征评分器的按方法汇总 |
 | `raw_folds.csv` | 15种原始候选×4包的正常留出报警统计 |
-| `stress_summary.csv` | 合成开发/挑战实验事件汇总，两阶段分开记录 |
+| `stress_summary.csv` | 开发阶段与挑战阶段的人工异常注入实验事件汇总，两阶段分开记录 |
 | `continuous_behavior.csv` | 连续序列行为诊断汇总 |
 
 `provenance.json`记录原封存manifest的SHA256和这四份文件的哈希，方便核对来源。公开文件不包含私有缓存、逐窗信号、模型、完整源快照或绝对路径；这些哈希和汇总表不是完整实验复验材料。
