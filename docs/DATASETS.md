@@ -94,17 +94,48 @@ datasets/smd/
 - 上游 README 的运行说明包含在测试集上选 best F1 的做法，本项目未采用该步骤。
 - `test_label` 只用于评价，不进入拟合、阈值校准或参数选择。
 
-## 3. reference — 第三方参考资料，来源与授权状态未知
+## 3. reference — 公开数据集的子集，来源已查明
 
 ```text
 datasets/reference/sample_audit_20261003T091746Z/
-  faults.details.-.LFP.batteries.xlsx   13 KB
-  field_data_test.zip                   39 MB
+  faults.details.-.LFP.batteries.xlsx   13 KB   故障明细表（见 3.3）
+  field_data_test.zip                   39 MB   2 个系统的现场数据（见 3.2）
 ```
 
-**这两个文件由第三方提供，来源、授权与用途均未确认。本文件只记录只读观察到的结构，不作任何来源或可用性声明。**
+**来源已查明：这两个文件出自一套公开数据集。**
 
-### 3.1 `faults.details.-.LFP.batteries.xlsx`
+| | |
+|---|---|
+| 标题 | Lithium-Ion Battery Field Data: 28 LFP battery systems with 8 cells in series, up to 5 years of operation |
+| DOI | [10.5281/zenodo.13715694](https://doi.org/10.5281/zenodo.13715694)（Zenodo，2024-09-14，v1.0.0） |
+| 许可 | **CC-BY-NC-4.0** —— 必须署名，**不得商用** |
+| 作者 | Schaeffer, Lenz, Gulla, Findeisen（TU Darmstadt）；Bazant, Braatz（MIT） |
+| 论文 | [10.1016/j.xcrp.2024.102258](https://doi.org/10.1016/j.xcrp.2024.102258)，*Cell Reports Physical Science* 5(11), 2024，开放获取 |
+| 参考代码 | [github.com/JoachimSchaeffer/BattGP](https://github.com/JoachimSchaeffer/BattGP) |
+| 全量数据 | Zenodo `field_data.zip`，1591 MB，28 个系统、1.33 亿行、中位采样间隔 5 s |
+
+本地 `field_data_test.zip` 是该数据集中 **2 个系统**的子集（`sys_3`、`sys_14`）。
+
+数据集规格与本地现场数据列名**逐项吻合**，可确认同源：
+
+| 数据集规格（官方 README） | 本地 `data_sys_*.csv` 列 |
+|---|---|
+| Current sensor 1 | `I_Battery` |
+| Voltage sensors 9 | `U_Battery` + `U_Cell_1..8` |
+| Temperature sensors 4 | `Temperature_1..4` |
+| Cell balancing current sensors 8 | `I_CNV_Cell_1..8` |
+| 24 V、≈160 Ah、LFP、每系统 8 单体串联 | 与论文正文一致 |
+
+### 3.1 本项目电池数据与该数据集的关系
+
+本项目 `datasets/battery/` 的包号（1–5、6、8、9、10、17–21）、每包 8 个可比单体、LFP 化学体系与 2013–2022 时间跨度，均与该数据集吻合。
+**但训练缓存没有时间戳，未能逐值核实**，因此只作为高度一致的证据，不作为已证明的等同关系。
+
+### 3.2 许可约束
+
+`CC-BY-NC-4.0` 含 **NC（非商业）** 条款。用于校园算法竞赛（AI+学科交叉）属非商业用途，可以；**若转入创新创业类赛道或任何商业化场景，该数据不可使用**。任何引用必须按 CC-BY 要求署名，并给出 DOI。
+
+### 3.3 `faults.details.-.LFP.batteries.xlsx`
 
 单表 100 条记录，6 列：`vid` / `Fault type` / `Severity` / `Fault cell id` / `Fault Value` / `Unit`。
 
@@ -117,7 +148,7 @@ datasets/reference/sample_audit_20261003T091746Z/
 Severity 为 Mild 52 / Moderate 30 / Severe 18。`vid` 取值 `vin_1`…`vin_100`；`Fault cell id` 取值 0–123（47 个不同值）。
 文档属性显示由 openpyxl 于 2025-01-26 生成。
 
-### 3.2 `field_data_test.zip`
+### 3.4 `field_data_test.zip`
 
 解压后 2 个 CSV，各 26 列：`Timestamp, U_Battery, I_Battery, SOC_Battery, Temperature_1..4, U_CR, I_CR, U_Cell_1..8, I_CNV_Cell_1..8`。
 
@@ -126,22 +157,36 @@ Severity 为 Mild 52 / Moderate 30 / Severe 18。`vid` 取值 `vin_1`…`vin_100
 | `field_data/data_sys_3.csv` | 937,123 | 2013-03-07 → 2013-08-14 |
 | `field_data/data_sys_14.csv` | 2,275,804 | 2017-08-05 → 2018-08-16 |
 
-### 3.3 为什么不能用于本项目的评价
+### 3.5 使用限制与合规要求
 
-- **无法建立连接键。** 故障表用 `vin_N`，现场数据用 `sys_N`，本项目电池缓存用包号 1–21，三者命名体系互不相通。
-- **单体索引规模不一致。** 故障表的 `Fault cell id` 取到 123，而现场数据只有 `U_Cell_1..8` 八个单体，本项目缓存为 20 列（取其中 8 列）。
-- **来源与授权未知。** 提供方未说明出处，无法确认转载或展示授权。
+**可以使用。** 现场数据来自公开数据集，按 CC-BY 署名即可，非商业的校园竞赛用途符合许可。
+引用时须给出数据集标题、作者、年份与 DOI：`10.5281/zenodo.13715694`。
 
-因此本仓库**未使用这两个文件产出任何实验、指标或结论**，它们也不进入交付材料。
-若后续确认了出处、授权与字段映射，应另立版本重新评价，并在此处补全引用信息。
+**必须同时说明的约束：**
 
-> 参赛提醒：规则要求引用他人数据须明确标注并符合授权要求，伪造或来源不明地使用数据可导致取消资格。
-> 在确认来源与授权之前，不得将本节材料作为作品的效果证据。
+1. **NC 条款。** 不得用于商业化场景，也不得用于创新创业类赛道。若作品后续转入商业方向，须替换数据。
+2. **数据集自带偏差。** 官方 README 声明全部 28 个系统均因"不满意行为"退回厂家，并明确写道
+   "this data set is biased and not representative of the operational data of the entire population"。
+   基于它的任何结论都应带上这条限制。
+3. **`faults.details` 的字段语义未确认。** `Fault cell id` 取值 0–123，与每包 8 个单体的规模不符；
+   `vid` 用 `vin_N` 而现场数据用 `sys_N`，两者命名体系不同。**该表目前不能直接当作单体索引或连接键使用。**
+4. **逐包故障真值来自投稿中的稿件。** 论文附录按包与单体列出故障类型与受影响单体，但该稿件是
+   2026-08-13 投 Elsevier 的预印本，尚未正式发表；引用它需要权利人确认授权。
+
+本仓库**未使用这两个文件产出任何实验、指标或结论**。
+若后续确认了字段语义与授权，应另立版本重新评价，并在此处补全引用信息。
+
+> 参赛提醒：规则要求引用他人技术、算法或数据须明确标注并符合授权要求。
+> 使用公开数据集是允许的，但必须署名并遵守 NC 条款。
 
 ## 4. 与评价的关系
 
-- 电池数据**没有故障事件记录与可靠时间映射**，因此只能报告正常参考上的误报，
+- 电池数据**在本仓库内没有故障事件记录与可靠时间映射**，因此只能报告正常参考上的误报，
   不能计算真实故障召回率、F1、提前量或单体定位准确率。
+- ⚠ **"训练数据保证无故障"这一前提未获证实，且现有证据对它不利。** 数据集官方 README 声明
+  全部 28 个系统均因"不满意行为"退回厂家；论文附录的逐包故障表也把包 6、8、9、10 全部列为有故障。
+  因此在取得时间映射之前，包 6/8/9/10 上的高报警率**不能自动解释为误报**，应表述为
+  "未解释的跨包报警"，而不是"正常数据误报"。
 - SMD 有逐点标签，可以计算严格逐点指标，但只覆盖 3 台机器，且训练段正常性是被假设而非被核实的。
 - 两类的具体评价边界见 [../benchmarks/20261008/REPORT.md](../benchmarks/20261008/REPORT.md)
   与 [../research_system_20261007/REAL_ACCEPTANCE.md](../research_system_20261007/REAL_ACCEPTANCE.md)。
