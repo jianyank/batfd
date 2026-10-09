@@ -4,12 +4,15 @@
 /datasets/
 /results/
 
-# 可运行包：datasets 是目录联接，git 会跟进去，必须显式排除，
-# 否则 SMD 的 .txt 与各 meta.json 会被加进版本库。
-/deliverables/06-可运行包/datasets/
-/deliverables/06-可运行包/_运行输出/
-# 解压出来的源码副本可由 05-代码包 内的 zip 重建
-/deliverables/06-可运行包/chronoguard_ts-*/
+# 参赛材料与过程记录不对外发布。
+# 文件保留在本地磁盘，只是不受版本控制 —— deliverables/ 内含技术方案、
+# 演示视频、答辩 PPT、佐证材料、代码包与可运行包；docs/project-memory 与
+# docs/superpowers 是会话日志与开发计划；tools/build_delivery.py 的输出
+# 落在 deliverables/05-代码包，公开仓库中该路径不存在。
+/deliverables/
+/docs/project-memory/
+/docs/superpowers/
+/tools/build_delivery.py
 /research_system_20261007/runs/
 /research_system_20261007/logs/
 /research_system_20261007/assets/word_qa/
