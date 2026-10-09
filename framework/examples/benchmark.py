@@ -19,7 +19,19 @@ from chronoguard.data import download_smd, load_smd, split_train, file_sha256
 from chronoguard.detector import METHODS
 from chronoguard.evaluation import detection_metrics, normal_metrics
 
-ROOT = Path(__file__).resolve().parents[1]
+FRAMEWORK = Path(__file__).resolve().parents[1]
+
+
+def _repo_root():
+    '''Repository root inside the source tree; otherwise the current directory.
+
+    Keeps the script runnable from an extracted copy with no repo around it.
+    '''
+    candidate = FRAMEWORK.parent
+    return candidate if (candidate / 'datasets').is_dir() else Path.cwd()
+
+
+ROOT = _repo_root()
 
 
 def write_json(path, content):
@@ -128,8 +140,8 @@ def smd_benchmark(args, out):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--scenario',choices=('battery','smd','both'),default='both')
-    parser.add_argument('--battery-cache',type=Path,default=ROOT/'outputs/cache/StandTrainData')
-    parser.add_argument('--smd-dir',type=Path,default=ROOT/'data/external/SMD')
+    parser.add_argument('--battery-cache',type=Path,default=ROOT/'datasets/battery/StandTrainData')
+    parser.add_argument('--smd-dir',type=Path,default=ROOT/'datasets/smd')
     parser.add_argument('--machines',nargs='+',default=['machine-1-1','machine-2-1','machine-3-1'])
     parser.add_argument('--download',action='store_true',help='Explicitly download SMD from its author repository')
     parser.add_argument('--max-fit',type=int,default=6000,help='Fixed chronological uniform fit sample cap')
@@ -138,7 +150,7 @@ def main():
     if args.max_fit < 3: parser.error('--max-fit must be >=3')
     args.output_dir.mkdir(parents=True,exist_ok=False)
     source=args.output_dir/'source'; source.mkdir()
-    source_files=[*sorted((ROOT/'src/chronoguard').glob('*.py')),Path(__file__),ROOT/'pyproject.toml']
+    source_files=[*sorted((FRAMEWORK/'src/chronoguard').glob('*.py')),Path(__file__),FRAMEWORK/'pyproject.toml']
     hashes={}
     for file in source_files:
         rel=file.relative_to(ROOT); target=source/rel; target.parent.mkdir(parents=True,exist_ok=True)

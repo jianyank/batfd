@@ -1,0 +1,12 @@
+# Exact environment this release was tested in (Python 3.12.14).
+# These pins are for reproduction. For a portable install that resolves
+# versions compatible with your Python, use: python -m pip install -e .
+# No PyTorch dependency is required.
+numpy==2.5.2
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+threadpoolctl==3.7.0
+
+# Only needed to regenerate figures; also available as: pip install -e .[plot]
+matplotlib==3.11.2

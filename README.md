@@ -14,6 +14,7 @@
 四方法为 robust、LOF、Isolation Forest、PCA；接口可复用，不是万能模型或原创检测算法。电池只验证正常误报，SMD 仅3台逐点基线，效果有限。
 
 ```bash
+cd framework
 python -m pip install -r requirements.txt
 python -m pip install -e . --no-deps
 python -X utf8 -B -m unittest discover -s tests -v
@@ -30,6 +31,19 @@ python -X utf8 -B examples/demo.py
 ## 目录
 
 ```text
+framework/                                 算法框架（可独立安装、可移植）
+  src/chronoguard/                         detector / features / data / evaluation
+  examples/                                demo.py / benchmark.py / benchmark_smd_windows.py
+  tests/                                   34 项库回归测试
+  pyproject.toml / requirements.txt        打包与依赖声明
+datasets/                                  数据（.gitignore 排除，不随交付分发）
+  battery/  smd/  reference/               规格见 docs/DATASETS.md
+results/                                   实验结果、图表与本地证据（不随交付分发）
+docs/                                      算法库说明、参赛说明、数据集规格、第三方材料
+benchmarks/20261008/                       两场景固定协议实验报告与溯源
+dist/                                      已构建的 wheel 与源码包
+
+原研究体系：
 research_system_20261007/
   features.py / methods.py / protocol.py    特征、15种基线、分段与报警规则
   inject.py / evaluation.py / system.py     合成压力测试及检测系统
@@ -41,7 +55,6 @@ research_system_20261007/
   BEST_SCHEME.md / USAGE.md / REAL_ACCEPTANCE.md
   assets/                                  报告三幅图
   results/                                 历史研究的汇总表（不是逐窗数据）
-requirements.txt                           核心依赖
 ```
 
 ## 快速开始
@@ -49,7 +62,7 @@ requirements.txt                           核心依赖
 已测试环境为 Python 3.12.14。以下从仓库根目录执行；核心流程不需要 PyTorch、MiKTeX 或 Office。
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r framework/requirements.txt
 cd research_system_20261007
 python -X utf8 -B -m unittest discover -s tests -v
 python run_benchmark.py --help
@@ -67,6 +80,6 @@ python run_benchmark.py --help
 
 ## 数据与模型不公开
 
-原始数据、NumPy缓存、逐窗输出、模型、历史源快照及原始日志不上传。本地 `data/`、`outputs/` 与未来 `research_system_20261007/runs/` 均被忽略。旧源码、未提交修改和全部实验已做仓库外可恢复备份。
+原始数据、NumPy缓存、逐窗输出、模型、历史源快照及原始日志不上传。本地 `datasets/`、`results/` 与未来 `research_system_20261007/runs/` 均被忽略。旧源码、未提交修改和全部实验已做仓库外可恢复备份。
 
 旧模型绑定旧源码哈希，不能直接配合整理后的源码运行：应在完整旧环境中恢复使用，或用新源码重新运行实验并冻结新模型；不得修改旧 manifest 绕过验证。公开汇总表不足以单独完成历史实验的完整封存复验。

@@ -17,11 +17,11 @@
 
 ## 2. 安装与快速运行
 
-Python 要求为 >=3.10；实际验证环境是 Python 3.12.14、NumPy 2.5.2、SciPy 1.18.1、scikit-learn 1.9.1、joblib 1.6.0。
+Python 要求为 >=3.10；实际验证环境是 Python 3.12.14、NumPy 2.5.2、SciPy 1.18.1、scikit-learn 1.9.1、joblib 1.6.0、matplotlib 3.11.2。
 声明的兼容版本范围不代表每个版本组合都已验证；复现实验优先使用 requirements.txt 中的精确环境。
-核心流程不需要 PyTorch、CUDA、MATLAB 或 Office。
+核心流程不需要 PyTorch、CUDA、MATLAB 或 Office。matplotlib 仅在重新生成图表时需要，已声明为可选依赖 `[plot]`。
 
-从仓库或源码包根目录执行：
+从 `framework/` 目录（或解压后的源码包根目录）执行：
 
 ```bash
 python -m pip install -r requirements.txt
@@ -36,8 +36,8 @@ wheel 另行提供，不包含数据或依赖的二进制包；安装时 pip 会
 python -m pip install dist/chronoguard_ts-0.1.0-py3-none-any.whl
 ```
 
-本机实际使用的解释器是 D:/Python/miniconda3/envs/batfd/python.exe；系统默认 Python 不具备所需依赖。
-仅在已经安装匹配依赖时使用 --no-deps。源码包包含新库、新测试、示例、文档和公开汇总；为 peer 等价测试附带原研究 features.py，但库运行不依赖它。
+本机验证时使用的解释器是 D:/Python/miniconda3/envs/batfd/python.exe；换一台机器只需任意已装依赖的 Python >=3.10 环境。
+仅在已经安装匹配依赖时使用 --no-deps。源码包包含新库、新测试、示例、文档和公开汇总；为 peer 等价测试附带原研究 features.py，但库运行不依赖它，该文件缺失时对应测试会跳过而不是失败。
 
 ## 3. 最小接口示例
 
@@ -184,13 +184,15 @@ joblib 使用 pickle。**只加载可信来源、在受控流程中生成的模�
 
 先完成依赖与本包安装。SMD 下载必须显式选择 --download；可能需要网络且上游 master 可变。本地下载清单保存 URL、大小和哈希，本次输入身份见 provenance.json。只要 download_manifest.json 存在，在线或离线 load_smd 均核对本机 train/test/test_label 的清单项、来源和哈希；不符或缺项时拒绝读取。没有清单的手工本地输入仍可读取，但仅进行形状、有限值与标签检查，不宣称已核实原始字节身份。
 
+从仓库根目录执行；脚本会自行定位仓库根，因此默认数据路径无需显式给出：
+
 ```bash
-python -X utf8 -B examples/benchmark.py --scenario smd --download --output-dir outputs/algolib/my_smd_run
-python -X utf8 -B examples/benchmark.py --scenario battery --battery-cache outputs/cache/StandTrainData --output-dir outputs/algolib/my_battery_run
-python -X utf8 -B examples/benchmark.py --scenario both --output-dir outputs/algolib/my_full_run
+python -X utf8 -B framework/examples/benchmark.py --scenario smd --download --output-dir results/algolib/my_smd_run
+python -X utf8 -B framework/examples/benchmark.py --scenario battery --output-dir results/algolib/my_battery_run
+python -X utf8 -B framework/examples/benchmark.py --scenario both --output-dir results/algolib/my_full_run
 ```
 
---output-dir 必须尚不存在，避免覆盖历史结果。电池缓存需要 signal.npy、ids.npy、meta.json：signal 为 (N,256,20)，ids 与窗口对齐且包号为 6/8/9/10。本次共 26508 窗；数据不随交付公开。
+--output-dir 必须尚不存在，避免覆盖历史结果。电池缓存默认位于 `datasets/battery/StandTrainData`，需要 signal.npy、ids.npy、meta.json：signal 为 (N,256,20)，ids 与窗口对齐且包号为 6/8/9/10。本次共 26508 窗；数据不随交付公开。完整数据集规格见 [DATASETS.md](DATASETS.md)。
 拟合最多 6000 窗，时间顺序均匀抽样；校准、验证、测试不抽样。q99 / 连续 5 窗 / seed42 固定，未按各机器测试最优方法拼接成绩。
 
 ## 10. 结果、边界与交付

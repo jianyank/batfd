@@ -1,6 +1,8 @@
 # Private inputs and local execution evidence (never published)
-/data/
-/outputs/
+# datasets/ holds data that is not redistributed; results/ holds run artifacts.
+# Dataset specifications live in docs/DATASETS.md, which is tracked.
+/datasets/
+/results/
 /research_system_20261007/runs/
 /research_system_20261007/logs/
 /research_system_20261007/assets/word_qa/

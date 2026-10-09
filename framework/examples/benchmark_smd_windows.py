@@ -19,7 +19,7 @@ import chronoguard
 from chronoguard.data import load_smd, make_windows, file_sha256, split_train
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from benchmark import ROOT, fit_model, predict_chunks, select_fit, write_json
+from benchmark import FRAMEWORK, ROOT, fit_model, predict_chunks, select_fit, write_json
 
 from chronoguard.detector import METHODS
 from chronoguard.evaluation import detection_metrics
@@ -65,7 +65,7 @@ def windowed_benchmark(args, out):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--smd-dir', type=Path, default=ROOT / 'data/external/SMD')
+    parser.add_argument('--smd-dir', type=Path, default=ROOT / 'datasets/smd')
     parser.add_argument('--machines', nargs='+', default=['machine-1-1', 'machine-2-1', 'machine-3-1'])
     parser.add_argument('--max-fit', type=int, default=6000,
                         help='Fixed chronological uniform fit sample cap; identical to benchmark.py')
@@ -80,8 +80,8 @@ def main():
     args.output_dir.mkdir(parents=True, exist_ok=False)
     source = args.output_dir / 'source'
     source.mkdir()
-    source_files = [*sorted((ROOT / 'src/chronoguard').glob('*.py')),
-                    ROOT / 'examples/benchmark.py', Path(__file__), ROOT / 'pyproject.toml']
+    source_files = [*sorted((FRAMEWORK / 'src/chronoguard').glob('*.py')),
+                    FRAMEWORK / 'examples/benchmark.py', Path(__file__), FRAMEWORK / 'pyproject.toml']
     hashes = {}
     for file in source_files:
         rel = file.relative_to(ROOT)

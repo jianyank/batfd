@@ -19,8 +19,8 @@ from evaluation import episode_metrics, aggregate_stress
 
 HOME=Path(__file__).resolve().parent
 ROOT=HOME.parent
-CACHE=ROOT/'outputs/cache/StandTrainData'
-FROZEN=ROOT/'outputs/diagnostics/phase5_e2e_lopo_20261002T105204Z'
+CACHE=ROOT/'datasets/battery/StandTrainData'
+FROZEN=ROOT/'results/diagnostics/phase5_e2e_lopo_20261002T105204Z'
 SOURCE_FILES=('features.py','methods.py','protocol.py','inject.py','system.py','evaluation.py','run_benchmark.py','configs/screen.json','predict.py')
 
 
