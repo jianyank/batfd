@@ -94,17 +94,49 @@ datasets/smd/
 - 上游 README 的运行说明包含在测试集上选 best F1 的做法，本项目未采用该步骤。
 - `test_label` 只用于评价，不进入拟合、阈值校准或参数选择。
 
-## 3. reference — 参考材料（用途未核验）
+## 3. reference — 第三方参考资料，来源与授权状态未知
 
 ```text
 datasets/reference/sample_audit_20261003T091746Z/
-  faults.details.-.LFP.batteries.xlsx
-  field_data_test.zip
+  faults.details.-.LFP.batteries.xlsx   13 KB
+  field_data_test.zip                   39 MB
 ```
 
-**这两个文件的来源与用途均未核验，本文件不对其内容作任何声明。**
-文件名提示第 1 个可能与 LFP 电池故障明细有关，但尚未打开确认，也未用于任何实验或评价。
-在确认其来源、授权与字段含义之前，不得把它当作真实故障事件记录使用。
+**这两个文件由第三方提供，来源、授权与用途均未确认。本文件只记录只读观察到的结构，不作任何来源或可用性声明。**
+
+### 3.1 `faults.details.-.LFP.batteries.xlsx`
+
+单表 100 条记录，6 列：`vid` / `Fault type` / `Severity` / `Fault cell id` / `Fault Value` / `Unit`。
+
+| Fault type | 数量 | 单位 |
+|---|---:|---|
+| Self-discharge | 40 | Ah/Day |
+| High Resistance | 30 | Ratio: R/R95 |
+| Low Capacity | 30 | Ratio: Q/Q95 |
+
+Severity 为 Mild 52 / Moderate 30 / Severe 18。`vid` 取值 `vin_1`…`vin_100`；`Fault cell id` 取值 0–123（47 个不同值）。
+文档属性显示由 openpyxl 于 2025-01-26 生成。
+
+### 3.2 `field_data_test.zip`
+
+解压后 2 个 CSV，各 26 列：`Timestamp, U_Battery, I_Battery, SOC_Battery, Temperature_1..4, U_CR, I_CR, U_Cell_1..8, I_CNV_Cell_1..8`。
+
+| 文件 | 行数 | 时间跨度 |
+|---|---:|---|
+| `field_data/data_sys_3.csv` | 937,123 | 2013-03-07 → 2013-08-14 |
+| `field_data/data_sys_14.csv` | 2,275,804 | 2017-08-05 → 2018-08-16 |
+
+### 3.3 为什么不能用于本项目的评价
+
+- **无法建立连接键。** 故障表用 `vin_N`，现场数据用 `sys_N`，本项目电池缓存用包号 1–21，三者命名体系互不相通。
+- **单体索引规模不一致。** 故障表的 `Fault cell id` 取到 123，而现场数据只有 `U_Cell_1..8` 八个单体，本项目缓存为 20 列（取其中 8 列）。
+- **来源与授权未知。** 提供方未说明出处，无法确认转载或展示授权。
+
+因此本仓库**未使用这两个文件产出任何实验、指标或结论**，它们也不进入交付材料。
+若后续确认了出处、授权与字段映射，应另立版本重新评价，并在此处补全引用信息。
+
+> 参赛提醒：规则要求引用他人数据须明确标注并符合授权要求，伪造或来源不明地使用数据可导致取消资格。
+> 在确认来源与授权之前，不得将本节材料作为作品的效果证据。
 
 ## 4. 与评价的关系
 
